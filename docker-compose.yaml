@@ -1,0 +1,27 @@
+services:
+  postgres:
+    container_name: postgres
+    image: 'postgres:16.4'
+    environment:
+      POSTGRES_DB: food-express
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin4-8.11
+    image: dpage/pgadmin4:8.11
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@mail.ru
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  postgres:
+  pgadmin-data:
