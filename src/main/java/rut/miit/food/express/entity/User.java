@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User extends BaseEntity{
     private String firstName;
     private String phoneNumber;

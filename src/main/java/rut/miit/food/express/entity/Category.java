@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 import java.util.Set;
 
 @Entity
-@Table(name = "category")
+@Table(name = "categories")
 public class Category extends BaseEntity{
     private String name;
     private Set<Dish> dishes;

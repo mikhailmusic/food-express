@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 @Entity
-@Table(name = "dish")
+@Table(name = "dishes")
 public class Dish extends BaseEntity {
     private String name;
     private String description;

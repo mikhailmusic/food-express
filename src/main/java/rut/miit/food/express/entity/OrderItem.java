@@ -3,7 +3,7 @@ package rut.miit.food.express.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "order_item")
+@Table(name = "order_items")
 public class OrderItem extends BaseEntity {
     private Integer orderPrice;
     private Integer count;

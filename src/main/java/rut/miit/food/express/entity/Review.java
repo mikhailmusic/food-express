@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "review")
+@Table(name = "reviews")
 public class Review extends BaseEntity{
     private String text;
     private Integer rating;

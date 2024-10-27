@@ -10,7 +10,7 @@ import java.time.LocalTime;
 import java.util.Set;
 
 @Entity
-@Table(name = "restaurant")
+@Table(name = "restaurants")
 public class Restaurant extends BaseEntity{
     private String name;
     private String address;

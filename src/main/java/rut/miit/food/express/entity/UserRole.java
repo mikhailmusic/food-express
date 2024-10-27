@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 import java.util.Set;
 
 @Entity
-@Table(name = "user_role")
+@Table(name = "user_roles")
 public class UserRole extends BaseEntity {
     private String role;
     private Set<User> users;
