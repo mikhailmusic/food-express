@@ -45,7 +45,7 @@ public class Restaurant extends BaseEntity{
         return address;
     }
 
-    @Column(name = "description")
+    @Column(name = "description", length = 700)
     public String getDescription() {
         return description;
     }

@@ -37,7 +37,7 @@ public class Dish extends BaseEntity {
         return name;
     }
 
-    @Column(name = "description")
+    @Column(name = "description", length = 500)
     public String getDescription() {
         return description;
     }

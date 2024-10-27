@@ -24,7 +24,7 @@ public class Review extends BaseEntity{
     protected Review() {
     }
 
-    @Column(name = "text")
+    @Column(name = "text", length = 500)
     public String getText() {
         return text;
     }
