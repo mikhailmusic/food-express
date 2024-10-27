@@ -8,16 +8,16 @@ import jakarta.persistence.Table;
 import java.util.Set;
 
 @Entity
-@Table(name = "statuses")
-public class Status extends BaseEntity {
+@Table(name = "order_statuses")
+public class OrderStatus extends BaseEntity {
     private String status;
     private Set<Order> orders;
 
-    public Status(String status) {
+    public OrderStatus(String status) {
         this.status = status;
     }
 
-    protected Status() {
+    protected OrderStatus() {
     }
 
     @Column(name = "status", nullable = false, unique = true)

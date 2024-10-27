@@ -15,10 +15,10 @@ public class Dish extends BaseEntity {
     private Integer calories;
     private String imageURL;
     private Restaurant restaurant;
-    private Category category;
+    private DishCategory category;
     private Set<OrderItem> orderItems;
 
-    public Dish(String name, String description, BigDecimal price, Integer weight, Integer calories, String imageURL, Restaurant restaurant, Category category) {
+    public Dish(String name, String description, BigDecimal price, Integer weight, Integer calories, String imageURL, Restaurant restaurant, DishCategory category) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -70,7 +70,7 @@ public class Dish extends BaseEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", nullable = false)
-    public Category getCategory() {
+    public DishCategory getCategory() {
         return category;
     }
 
@@ -107,7 +107,7 @@ public class Dish extends BaseEntity {
         this.restaurant = restaurant;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(DishCategory category) {
         this.category = category;
     }
 

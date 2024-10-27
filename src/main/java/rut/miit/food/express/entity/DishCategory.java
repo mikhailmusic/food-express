@@ -8,16 +8,16 @@ import jakarta.persistence.Table;
 import java.util.Set;
 
 @Entity
-@Table(name = "categories")
-public class Category extends BaseEntity{
+@Table(name = "dish_categories")
+public class DishCategory extends BaseEntity{
     private String name;
     private Set<Dish> dishes;
 
-    public Category(String name) {
+    public DishCategory(String name) {
         this.name = name;
     }
 
-    protected Category() {
+    protected DishCategory() {
     }
 
     @Column(name = "name", nullable = false, unique = true)

@@ -13,11 +13,11 @@ public class Order extends BaseEntity{
     private LocalDateTime deliveryTime;
     private User user;
     private Restaurant restaurant;
-    private Status status;
+    private OrderStatus status;
     private Set<OrderItem> orderItems;
     private Review review;
 
-    public Order(User user, Restaurant restaurant, Status status) {
+    public Order(User user, Restaurant restaurant, OrderStatus status) {
         this.creationTime = LocalDateTime.now();
         this.user = user;
         this.restaurant = restaurant;
@@ -51,7 +51,7 @@ public class Order extends BaseEntity{
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "status_id", nullable = false)
-    public Status getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
@@ -81,7 +81,7 @@ public class Order extends BaseEntity{
         this.restaurant = restaurant;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 
