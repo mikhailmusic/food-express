@@ -2,15 +2,17 @@ package rut.miit.food.express.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "order_items")
 public class OrderItem extends BaseEntity {
-    private Integer orderPrice;
+    private BigDecimal orderPrice;
     private Integer count;
     private Order order;
     private Dish dish;
 
-    public OrderItem(Integer orderPrice, Integer count, Dish dish) {
+    public OrderItem(BigDecimal orderPrice, Integer count, Dish dish) {
         this.orderPrice = orderPrice;
         this.count = count;
         this.dish = dish;
@@ -20,7 +22,7 @@ public class OrderItem extends BaseEntity {
     }
 
     @Column(name = "order_price", nullable = false)
-    public Integer getOrderPrice() {
+    public BigDecimal getOrderPrice() {
         return orderPrice;
     }
 
@@ -41,7 +43,7 @@ public class OrderItem extends BaseEntity {
         return dish;
     }
 
-    public void setOrderPrice(Integer orderPrice) {
+    public void setOrderPrice(BigDecimal orderPrice) {
         this.orderPrice = orderPrice;
     }
 
