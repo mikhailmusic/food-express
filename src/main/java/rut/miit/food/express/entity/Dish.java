@@ -3,6 +3,7 @@ package rut.miit.food.express.entity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 @Table(name = "dish")
@@ -15,6 +16,7 @@ public class Dish extends BaseEntity {
     private String imageURL;
     private Restaurant restaurant;
     private Category category;
+    private Set<OrderItem> orderItems;
 
     public Dish(String name, String description, BigDecimal price, Integer weight, Integer calories, String imageURL, Restaurant restaurant, Category category) {
         this.name = name;
@@ -30,7 +32,7 @@ public class Dish extends BaseEntity {
     protected Dish() {
     }
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     public String getName() {
         return name;
     }
@@ -72,6 +74,11 @@ public class Dish extends BaseEntity {
         return category;
     }
 
+    @OneToMany(mappedBy = "dish")
+    public Set<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -102,5 +109,9 @@ public class Dish extends BaseEntity {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public void setOrderItems(Set<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }
