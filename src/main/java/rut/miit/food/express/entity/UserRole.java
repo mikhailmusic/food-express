@@ -13,9 +13,8 @@ public class UserRole extends BaseEntity {
     private String role;
     private Set<User> users;
 
-    public UserRole(String role, Set<User> users) {
+    public UserRole(String role) {
         this.role = role;
-        this.users = users;
     }
 
     protected UserRole() {

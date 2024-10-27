@@ -22,7 +22,7 @@ public class Restaurant extends BaseEntity{
     private Set<Order> orders;
     private Set<Dish> dishes;
 
-    public Restaurant(String name, String address, String description, String phoneNumber, LocalTime openTime, LocalTime closeTime, BigDecimal minOrderAmount, Set<Order> orders, Set<Dish> dishes) {
+    public Restaurant(String name, String address, String description, String phoneNumber, LocalTime openTime, LocalTime closeTime, BigDecimal minOrderAmount) {
         this.name = name;
         this.address = address;
         this.description = description;
@@ -30,8 +30,6 @@ public class Restaurant extends BaseEntity{
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.minOrderAmount = minOrderAmount;
-        this.orders = orders;
-        this.dishes = dishes;
     }
 
     protected Restaurant() {

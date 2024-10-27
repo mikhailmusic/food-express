@@ -13,9 +13,8 @@ public class Status extends BaseEntity {
     private String status;
     private Set<Order> orders;
 
-    public Status(String status, Set<Order> orders) {
+    public Status(String status) {
         this.status = status;
-        this.orders = orders;
     }
 
     protected Status() {

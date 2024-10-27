@@ -13,9 +13,8 @@ public class Category extends BaseEntity{
     private String name;
     private Set<Dish> dishes;
 
-    public Category(String name, Set<Dish> dishes) {
+    public Category(String name) {
         this.name = name;
-        this.dishes = dishes;
     }
 
     protected Category() {

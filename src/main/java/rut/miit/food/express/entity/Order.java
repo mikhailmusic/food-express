@@ -3,6 +3,7 @@ package rut.miit.food.express.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -16,13 +17,12 @@ public class Order extends BaseEntity{
     private Set<OrderItem> orderItems;
     private Review review;
 
-    public Order(LocalDateTime creationTime, LocalDateTime deliveryTime, User user, Restaurant restaurant, Status status, Set<OrderItem> orderItems) {
-        this.creationTime = creationTime;
-        this.deliveryTime = deliveryTime;
+    public Order(User user, Restaurant restaurant, Status status) {
+        this.creationTime = LocalDateTime.now();
         this.user = user;
         this.restaurant = restaurant;
         this.status = status;
-        this.orderItems = orderItems;
+        this.orderItems = new HashSet<>();
     }
 
     protected Order() {

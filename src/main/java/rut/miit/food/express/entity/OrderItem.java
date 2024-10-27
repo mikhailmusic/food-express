@@ -10,10 +10,9 @@ public class OrderItem extends BaseEntity {
     private Order order;
     private Dish dish;
 
-    public OrderItem(Integer orderPrice, Integer count, Order order, Dish dish) {
+    public OrderItem(Integer orderPrice, Integer count, Dish dish) {
         this.orderPrice = orderPrice;
         this.count = count;
-        this.order = order;
         this.dish = dish;
     }
 
