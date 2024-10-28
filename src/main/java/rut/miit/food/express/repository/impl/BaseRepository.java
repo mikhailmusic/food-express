@@ -5,7 +5,6 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
 import rut.miit.food.express.entity.BaseEntity;
 import rut.miit.food.express.repository.generic.CreateRepository;
-import rut.miit.food.express.repository.generic.DeleteRepository;
 import rut.miit.food.express.repository.generic.ReadRepository;
 import rut.miit.food.express.repository.generic.UpdateRepository;
 
@@ -13,11 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class BaseRepository<T extends BaseEntity, ID> implements
-        CreateRepository<T, ID>, ReadRepository<T, ID>, UpdateRepository<T, ID>, DeleteRepository<T, ID> {
+        CreateRepository<T, ID>, ReadRepository<T, ID>, UpdateRepository<T, ID> {
 
-    private final Class<T> entityClass;
     @PersistenceContext
     private EntityManager entityManager;
+    private final Class<T> entityClass;
 
     public BaseRepository(Class<T> entityClass) {
         this.entityClass = entityClass;
@@ -48,22 +47,4 @@ public abstract class BaseRepository<T extends BaseEntity, ID> implements
                 .getResultList();
     }
 
-    @Override
-    @Transactional
-    public void delete(T entity) {
-        if (entityManager.contains(entity)) {
-            entityManager.remove(entity);
-        } else {
-            entityManager.remove(entityManager.merge(entity));
-        }
-    }
-
-    @Override
-    @Transactional
-    public void deleteById(ID id) {
-        T entity = entityManager.find(entityClass, id);
-        if (entity != null) {
-            entityManager.remove(entity);
-        }
-    }
 }
