@@ -14,18 +14,16 @@ public class User extends BaseEntity{
     private LocalDate birthDate;
     private String login;
     private String password;
-    private UserRole role;
     private Set<Order> orders;
     private Set<Review> reviews;
 
-    public User(String firstName, String phoneNumber, String address, LocalDate birthDate, String login, String password, UserRole role) {
+    public User(String firstName, String phoneNumber, String address, LocalDate birthDate, String login, String password) {
         this.firstName = firstName;
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.birthDate = birthDate;
         this.login = login;
         this.password = password;
-        this.role = role;
     }
 
     protected User() {
@@ -61,12 +59,6 @@ public class User extends BaseEntity{
         return password;
     }
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "role_id", nullable = false)
-    public UserRole getRole() {
-        return role;
-    }
-
     @OneToMany(mappedBy = "user")
     public Set<Order> getOrders() {
         return orders;
@@ -99,10 +91,6 @@ public class User extends BaseEntity{
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
     }
 
     public void setOrders(Set<Order> orders) {

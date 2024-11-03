@@ -1,6 +1,7 @@
 package rut.miit.food.express.entity;
 
 import jakarta.persistence.*;
+import rut.miit.food.express.entity.enums.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -49,8 +50,8 @@ public class Order extends BaseEntity{
         return restaurant;
     }
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "status_id", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @JoinColumn(name = "status", nullable = false)
     public OrderStatus getStatus() {
         return status;
     }
