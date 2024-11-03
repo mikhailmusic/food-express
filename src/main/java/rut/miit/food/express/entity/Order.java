@@ -51,7 +51,7 @@ public class Order extends BaseEntity{
     }
 
     @Enumerated(EnumType.STRING)
-    @JoinColumn(name = "status", nullable = false)
+    @Column(name = "status", nullable = false)
     public OrderStatus getStatus() {
         return status;
     }
