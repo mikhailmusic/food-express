@@ -18,7 +18,7 @@ public class DishRepositoryImpl extends BaseRepository<Dish, Integer> implements
     }
 
     @Override
-    public List<Dish> findAllByNameContaining(String namePart) {
+    public List<Dish> findByNameContaining(String namePart) {
         return entityManager.createQuery("SELECT d FROM Dish d WHERE d.name LIKE :namePart", Dish.class)
                 .setParameter("namePart", "%" + namePart + "%")
                 .getResultList();

@@ -12,7 +12,7 @@ public interface RestaurantRepository extends
         CreateRepository<Restaurant, Integer>, ReadRepository<Restaurant, Integer>, UpdateRepository<Restaurant, Integer> {
 
     Optional<Restaurant> findByName(String name);
-    List<Restaurant> findAllByAddressContaining(String addressPart);
+    List<Restaurant> findByAddressContaining(String addressPart);
 
 }
 

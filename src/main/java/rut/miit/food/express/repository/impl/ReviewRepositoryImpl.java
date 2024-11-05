@@ -18,7 +18,7 @@ public class ReviewRepositoryImpl extends BaseRepository<Review, Integer> implem
     }
 
     @Override
-    public List<Review> findAllByRestaurantId(Integer restaurantId) {
+    public List<Review> findByRestaurantId(Integer restaurantId) {
         return entityManager.createQuery("SELECT r FROM Review r JOIN r.order o WHERE o.restaurant.id = :restaurantId", Review.class)
                 .setParameter("restaurantId", restaurantId)
                 .getResultList();

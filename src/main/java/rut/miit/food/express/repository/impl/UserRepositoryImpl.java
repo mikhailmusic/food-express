@@ -1,6 +1,7 @@
 package rut.miit.food.express.repository.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import rut.miit.food.express.entity.User;
@@ -19,9 +20,13 @@ public class UserRepositoryImpl extends BaseRepository<User, Integer> implements
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login", User.class)
-                .setParameter("login", username)
-                .getResultStream().findFirst();
+        try {
+            return Optional.of(entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login", User.class)
+                    .setParameter("login", username)
+                    .getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
 }

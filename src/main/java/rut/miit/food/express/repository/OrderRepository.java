@@ -11,7 +11,7 @@ import java.util.List;
 public interface OrderRepository extends
         CreateRepository<Order, Integer>, ReadRepository<Order, Integer>, UpdateRepository<Order, Integer> {
 
-    List<Order> findAllByTimeBetween(LocalDateTime start, LocalDateTime end, Integer restaurantId);
-
+    List<Order> findByRestaurantTimeBetween(Integer restaurantId, LocalDateTime start, LocalDateTime end);
+    List<Order> findByUserId(Integer userId, LocalDateTime start, LocalDateTime end);
 }
 

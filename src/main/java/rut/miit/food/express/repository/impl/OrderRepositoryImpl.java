@@ -19,11 +19,21 @@ public class OrderRepositoryImpl extends BaseRepository<Order, Integer> implemen
     }
 
     @Override
-    public List<Order> findAllByTimeBetween(LocalDateTime start, LocalDateTime end, Integer restaurantId) {   //                                //
-        return entityManager.createQuery("SELECT o FROM Order o WHERE o.creationTime BETWEEN :start AND :end AND o.restaurant.id = :restaurantId", Order.class)
+    public List<Order> findByRestaurantTimeBetween(Integer restaurantId, LocalDateTime start, LocalDateTime end) {
+        return entityManager.createQuery("SELECT o FROM Order o WHERE o.restaurant.id = :restaurantId AND o.creationTime BETWEEN :start AND :end", Order.class)
+                .setParameter("restaurantId", restaurantId)
                 .setParameter("start", start)
                 .setParameter("end", end)
-                .setParameter("restaurantId", restaurantId)
                 .getResultList();
     }
+
+    @Override
+    public List<Order> findByUserId(Integer userId, LocalDateTime start, LocalDateTime end) {
+        return entityManager.createQuery("SELECT o FROM Order o WHERE o.user.id = :userId AND o.creationTime BETWEEN :start AND :end", Order.class)
+                .setParameter("userId", userId)
+                .setParameter("start", start)
+                .setParameter("end", end)
+                .getResultList();
+    }
+    // SELECT o FROM Order o WHERE o.user.id = :userId AND o.creationTime >= :dateFrom
 }
