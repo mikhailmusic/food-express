@@ -117,7 +117,7 @@ public class Restaurant extends BaseEntity{
     }
 
 
-    public boolean isOpenNow() {
+    public boolean checkIsOpenNow() {
         LocalTime currentTime = LocalTime.now();
         return !currentTime.isBefore(openTime) && currentTime.isBefore(closeTime);
     }
