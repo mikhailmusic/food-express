@@ -2,8 +2,6 @@ package rut.miit.food.express.entity;
 
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "order_items")
 public class OrderItem extends BaseEntity {
@@ -11,8 +9,9 @@ public class OrderItem extends BaseEntity {
     private Order order;
     private Dish dish;
 
-    public OrderItem(Integer count, Dish dish) {
+    public OrderItem(Integer count, Order order, Dish dish) {
         this.count = count;
+        this.order = order;
         this.dish = dish;
     }
 

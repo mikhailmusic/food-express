@@ -13,10 +13,10 @@ public class Review extends BaseEntity{
     private Order order;
     private User user;
 
-    public Review(String text, Integer rating, LocalDateTime date, Order order, User user) {
+    public Review(String text, Integer rating, Order order, User user) {
         this.text = text;
         this.rating = rating;
-        this.date = date;
+        this.date = LocalDateTime.now();
         this.order = order;
         this.user = user;
     }

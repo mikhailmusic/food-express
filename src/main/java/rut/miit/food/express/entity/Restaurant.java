@@ -115,4 +115,10 @@ public class Restaurant extends BaseEntity{
     public void setDishes(Set<Dish> dishes) {
         this.dishes = dishes;
     }
+
+
+    public boolean isOpenNow() {
+        LocalTime currentTime = LocalTime.now();
+        return !currentTime.isBefore(openTime) && currentTime.isBefore(closeTime);
+    }
 }

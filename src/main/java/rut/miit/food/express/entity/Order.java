@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import rut.miit.food.express.entity.enums.OrderStatus;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,12 +17,12 @@ public class Order extends BaseEntity{
     private Set<OrderItem> orderItems;
     private Review review;
 
-    public Order(User user, Restaurant restaurant, OrderStatus status) {
+    public Order(User user, Restaurant restaurant, Set<OrderItem> orderItems) {
         this.creationTime = LocalDateTime.now();
         this.user = user;
         this.restaurant = restaurant;
-        this.status = status;
-        this.orderItems = new HashSet<>();
+        this.status = OrderStatus.CREATED;
+        this.orderItems = orderItems;
     }
 
     protected Order() {
@@ -56,7 +55,7 @@ public class Order extends BaseEntity{
         return status;
     }
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     public Set<OrderItem> getOrderItems() {
         return orderItems;
     }
