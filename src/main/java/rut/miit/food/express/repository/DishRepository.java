@@ -11,6 +11,7 @@ public interface DishRepository extends
         CreateRepository<Dish, Integer>, ReadRepository<Dish, Integer>, UpdateRepository<Dish, Integer> {
 
     List<Dish> findByNameContaining(String namePart);
+    List<Dish> findByRestaurantId(Integer restaurantId);
 
 }
 

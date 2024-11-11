@@ -23,4 +23,11 @@ public class DishRepositoryImpl extends BaseRepository<Dish, Integer> implements
                 .setParameter("namePart", "%" + namePart + "%")
                 .getResultList();
     }
+
+    @Override
+    public List<Dish> findByRestaurantId(Integer restaurantId) {
+        return entityManager.createQuery("SELECT b FROM Dish b WHERE b.restaurant.id = :restaurantId", Dish.class)
+                .setParameter("restaurantId", restaurantId)
+                .getResultList();
+    }
 }
