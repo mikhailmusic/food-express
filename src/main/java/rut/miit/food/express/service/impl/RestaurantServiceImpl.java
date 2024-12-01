@@ -92,16 +92,25 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public List<RestaurantRatingDto> ratingRestaurants() {
         List<RestaurantRatingDto> dtoList = new ArrayList<>();
-        for (Restaurant restaurant : restaurantRepository.findAllWithOrders()) {        // EAGER
-            List<Order> orders = restaurant.getOrders().stream()
-                    .filter(order -> order.getStatus() == OrderStatus.DELIVERED).toList();
-            List<Review> reviews = orders.stream().map(Order::getReview).filter(Objects::nonNull).toList();
+        for (Restaurant restaurant : restaurantRepository.findAllWithOrders()) {   // EAGER - беру все сразу - 1 запрос
 
-            if (reviews.isEmpty()) continue;
+            int orderCount = 0;
+            int reviewCount = 0;
+            float totalRating = 0;
+            for (Order order : restaurant.getOrders()) {
+                if (order.getStatus() == OrderStatus.DELIVERED) {
+                    orderCount++;
 
-            float averageRating = (float) reviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
-            RestaurantRatingDto dto = new RestaurantRatingDto(restaurant.getId(), restaurant.getName(), orders.size(),
-                    reviews.size(), Math.round(averageRating * 10) / 10.0f);
+                    if (order.getReview() != null) {
+                        reviewCount++;
+                        totalRating += order.getReview().getRating();
+                    }
+                }
+            }
+            if (reviewCount == 0) continue;
+            float averageRating = totalRating / reviewCount;
+            RestaurantRatingDto dto = new RestaurantRatingDto(restaurant.getId(), restaurant.getName(), orderCount,
+                    reviewCount, Math.round(averageRating * 10) / 10.0f);
             dtoList.add(dto);
         }
         return dtoList.stream().sorted(Comparator.comparingDouble(RestaurantRatingDto::averageRating).reversed()).limit(5).toList();
