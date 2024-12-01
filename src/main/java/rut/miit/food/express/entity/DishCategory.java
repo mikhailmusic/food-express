@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import rut.miit.food.express.exception.InvalidValueException;
 
 import java.util.Set;
 
@@ -14,7 +15,7 @@ public class DishCategory extends BaseEntity{
     private Set<Dish> dishes;
 
     public DishCategory(String name) {
-        this.name = name;
+        setName(name);
     }
 
     protected DishCategory() {
@@ -30,11 +31,14 @@ public class DishCategory extends BaseEntity{
         return dishes;
     }
 
-    public void setName(String name) {
+    protected void setName(String name) {
+        if (name == null || name.trim().length() < 2) {
+            throw new InvalidValueException("Name must be at least 2 characters and not null");
+        }
         this.name = name;
     }
 
-    public void setDishes(Set<Dish> dishes) {
+    protected void setDishes(Set<Dish> dishes) {
         this.dishes = dishes;
     }
 }

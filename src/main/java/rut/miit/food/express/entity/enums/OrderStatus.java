@@ -1,6 +1,7 @@
 package rut.miit.food.express.entity.enums;
 
 public enum OrderStatus {
+    DRAFT,
     CREATED,
     CONFIRMED,
     COOKING_PROCESS,

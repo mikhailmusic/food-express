@@ -10,7 +10,7 @@ import java.util.List;
 public interface DishRepository extends
         CreateRepository<Dish, Integer>, ReadRepository<Dish, Integer>, UpdateRepository<Dish, Integer> {
 
-    List<Dish> findByNameContaining(String namePart);
+    List<Dish> findByNameContaining(String name, Integer categoryId);
     List<Dish> findByRestaurantId(Integer restaurantId);
 
 }

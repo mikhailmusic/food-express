@@ -1,8 +1,12 @@
 package rut.miit.food.express.entity;
 
 import jakarta.persistence.*;
+import rut.miit.food.express.entity.enums.OrderStatus;
+import rut.miit.food.express.exception.InvalidValueException;
+import rut.miit.food.express.exception.ValidationException;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "reviews")
@@ -14,11 +18,12 @@ public class Review extends BaseEntity{
     private User user;
 
     public Review(String text, Integer rating, Order order, User user) {
-        this.text = text;
-        this.rating = rating;
-        this.date = LocalDateTime.now();
-        this.order = order;
-        this.user = user;
+        validateState(order);
+        setText(text);
+        setRating(rating);
+        setDate(LocalDateTime.now());
+        setOrder(order);
+        setUser(user);
     }
 
     protected Review() {
@@ -45,29 +50,54 @@ public class Review extends BaseEntity{
         return order;
     }
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     public User getUser() {
         return user;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    protected void setText(String text) {
+        if (text != null && text.trim().length() > 500) {
+            throw new InvalidValueException("Text must be at most 500 characters long");
+        }
+
+        this.text = (text != null && text.trim().isEmpty()) ? null : text;
     }
 
-    public void setRating(Integer rating) {
+    protected void setRating(Integer rating) {
+        if (rating == null || rating < 1 || rating > 5) {
+            throw new InvalidValueException("Rating must be between 1 and 5 and not null");
+        }
         this.rating = rating;
     }
 
-    public void setDate(LocalDateTime date) {
+    protected void setDate(LocalDateTime date) {
+        if (date == null) {
+            throw new InvalidValueException("Date must not be null");
+        }
         this.date = date;
     }
 
-    public void setOrder(Order order) {
+    protected void setOrder(Order order) {
+        if (order == null) {
+            throw new InvalidValueException("Order must not be null");
+        }
+
         this.order = order;
     }
 
-    public void setUser(User user) {
+    protected void setUser(User user) {
+        if (user == null) {
+            throw new InvalidValueException("User must not be null");
+        }
         this.user = user;
+    }
+
+    private void validateState(Order order) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime deliveryTime = order.getDeliveryTime();
+        if (!order.getStatus().equals(OrderStatus.DELIVERED) || ChronoUnit.HOURS.between(deliveryTime, currentTime) > 2) {
+            throw new ValidationException("Review can only be left within 2 hours after delivery");
+        }
     }
 }

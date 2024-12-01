@@ -1,6 +1,7 @@
 package rut.miit.food.express.entity;
 
 import jakarta.persistence.*;
+import rut.miit.food.express.exception.InvalidValueException;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -19,14 +20,14 @@ public class Dish extends BaseEntity {
     private Set<OrderItem> orderItems;
 
     public Dish(String name, String description, BigDecimal price, Integer weight, Integer calories, String imageURL, Restaurant restaurant, DishCategory category) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.weight = weight;
-        this.calories = calories;
-        this.imageURL = imageURL;
-        this.restaurant = restaurant;
-        this.category = category;
+        setName(name);
+        setDescription(description);
+        setPrice(price);
+        setWeight(weight);
+        setCalories(calories);
+        setImageURL(imageURL);
+        setRestaurant(restaurant);
+        setCategory(category);
     }
 
     protected Dish() {
@@ -80,38 +81,56 @@ public class Dish extends BaseEntity {
     }
 
     public void setName(String name) {
+        if (name == null || name.trim().length() < 2) {
+            throw new InvalidValueException("Name must be at least 2 characters and not null");
+        }
         this.name = name;
     }
 
     public void setDescription(String description) {
+        if (description != null && description.length() > 500) throw new InvalidValueException("Description must be at most 500 characters");
         this.description = description;
     }
 
     public void setPrice(BigDecimal price) {
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 1) throw new InvalidValueException("Price must not be null and must be at least 1");
         this.price = price;
     }
 
     public void setWeight(Integer weight) {
+        if (weight == null || weight < 1) throw new InvalidValueException("Weight must not be null and must be at least 1");
         this.weight = weight;
     }
 
     public void setCalories(Integer calories) {
+        if (calories == null || calories < 1) {
+            throw new InvalidValueException("Calories must not be null and must be at least 1");
+        }
         this.calories = calories;
     }
 
     public void setImageURL(String imageURL) {
+        if (imageURL == null || imageURL.trim().isEmpty()) {
+            throw new InvalidValueException("Image URL must not be null, empty, or contain only whitespace");
+        }
         this.imageURL = imageURL;
     }
 
-    public void setRestaurant(Restaurant restaurant) {
+    protected void setRestaurant(Restaurant restaurant) {
+        if (restaurant == null) {
+            throw new InvalidValueException("Restaurant must not be null");
+        }
         this.restaurant = restaurant;
     }
 
     public void setCategory(DishCategory category) {
+        if (category == null) {
+            throw new InvalidValueException("Category must not be null");
+        }
         this.category = category;
     }
 
-    public void setOrderItems(Set<OrderItem> orderItems) {
+    protected void setOrderItems(Set<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 }

@@ -12,7 +12,8 @@ public interface RestaurantRepository extends
         CreateRepository<Restaurant, Integer>, ReadRepository<Restaurant, Integer>, UpdateRepository<Restaurant, Integer> {
 
     Optional<Restaurant> findByName(String name);
-    List<Restaurant> findByAddressContaining(String addressPart);
+    List<Restaurant> findByNameContaining(String name);
+    List<Restaurant> findAllWithOrders();
 
 }
 

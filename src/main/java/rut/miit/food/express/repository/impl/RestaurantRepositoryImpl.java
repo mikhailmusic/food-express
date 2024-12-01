@@ -31,9 +31,15 @@ public class RestaurantRepositoryImpl extends BaseRepository<Restaurant, Integer
     }
 
     @Override
-    public List<Restaurant> findByAddressContaining(String addressPart) {
-        return entityManager.createQuery("SELECT r FROM Restaurant r WHERE r.address LIKE :addressPart", Restaurant.class)
-                .setParameter("addressPart", "%" + addressPart + "%")
+    public List<Restaurant> findByNameContaining(String name) {
+        return entityManager.createQuery("SELECT r FROM Restaurant r WHERE LOWER(r.name) LIKE LOWER(:name)", Restaurant.class)
+                .setParameter("name", "%" + name + "%")
+                .getResultList();
+    }
+
+    @Override
+    public List<Restaurant> findAllWithOrders() {
+        return entityManager.createQuery("SELECT r FROM Restaurant r LEFT JOIN FETCH r.orders o LEFT JOIN FETCH o.review", Restaurant.class)
                 .getResultList();
     }
 }

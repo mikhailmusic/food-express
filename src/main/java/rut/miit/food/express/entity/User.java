@@ -1,8 +1,10 @@
 package rut.miit.food.express.entity;
 
 import jakarta.persistence.*;
+import rut.miit.food.express.exception.InvalidValueException;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.Set;
 
 @Entity
@@ -17,13 +19,12 @@ public class User extends BaseEntity{
     private Set<Order> orders;
     private Set<Review> reviews;
 
-    public User(String firstName, String phoneNumber, String address, LocalDate birthDate, String login, String password) {
-        this.firstName = firstName;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.birthDate = birthDate;
-        this.login = login;
-        this.password = password;
+    public User(String firstName, String login, String address, LocalDate birthDate, String password, String confirmPassword) {
+        setFirstName(firstName);
+        setLogin(login);
+        setAddress(address);
+        setBirthDate(birthDate);
+        setPassword(password, confirmPassword);
     }
 
     protected User() {
@@ -34,7 +35,7 @@ public class User extends BaseEntity{
         return firstName;
     }
 
-    @Column(name = "phone_number", nullable = false, unique = true)
+    @Column(name = "phone_number", unique = true)
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -70,34 +71,81 @@ public class User extends BaseEntity{
     }
 
     public void setFirstName(String firstName) {
+        if (firstName == null || firstName.trim().length() < 2) {
+            throw new InvalidValueException("First Name must be at least 2 characters and not null");
+        }
         this.firstName = firstName;
     }
 
     public void setPhoneNumber(String phoneNumber) {
+        if (phoneNumber != null && !phoneNumber.matches("\\+?[0-9-]+")) {
+            throw new InvalidValueException("Phone number must only contain digits and optional '+'");
+        }
         this.phoneNumber = phoneNumber;
     }
 
     public void setAddress(String address) {
+        if (address == null || address.trim().length() < 10) {
+            throw new InvalidValueException("Address must be at least 10 characters long and not null");
+        }
         this.address = address;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
+    protected void setBirthDate(LocalDate birthDate) {
+        if (birthDate == null) {
+            throw new InvalidValueException("Birth date must not be null");
+        }
+        LocalDate currentDate = LocalDate.now();
+        Period period = Period.between(birthDate, currentDate);
+
+        if (period.getYears() < 14) {
+            throw new InvalidValueException("Person must be at least 14 years old");
+        }
         this.birthDate = birthDate;
     }
 
     public void setLogin(String login) {
+        if (login == null || login.trim().length() < 5) {
+            throw new InvalidValueException("Login must not be null and must be at least 5 characters long");
+        }
         this.login = login;
     }
 
-    public void setPassword(String password) {
+    protected void setPassword(String password) {
         this.password = password;
     }
 
-    public void setOrders(Set<Order> orders) {
+    protected void setOrders(Set<Order> orders) {
         this.orders = orders;
     }
 
-    public void setReviews(Set<Review> reviews) {
+    protected void setReviews(Set<Review> reviews) {
         this.reviews = reviews;
+    }
+
+    public void changePassword(String oldPassword, String newPassword, String confirmPassword) {
+        if (!password.equals(oldPassword)) {
+            throw new InvalidValueException("Old password was entered incorrectly");
+        }
+        setPassword(newPassword, confirmPassword);
+    }
+
+    private void setPassword(String password, String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
+            throw new InvalidValueException("Password and its confirmation do not match");
+        }
+
+        if (!isPasswordValid(password)) {
+            throw new InvalidValueException("Password is not secure");
+        }
+
+        this.password = password;
+    }
+
+    private boolean isPasswordValid(String password) {
+        if (password == null || password.length() < 8) {
+            return false;
+        }
+        return true;
     }
 }

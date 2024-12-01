@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import rut.miit.food.express.exception.InvalidValueException;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -23,13 +24,13 @@ public class Restaurant extends BaseEntity{
     private Set<Dish> dishes;
 
     public Restaurant(String name, String address, String description, String phoneNumber, LocalTime openTime, LocalTime closeTime, BigDecimal minOrderAmount) {
-        this.name = name;
-        this.address = address;
-        this.description = description;
-        this.phoneNumber = phoneNumber;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-        this.minOrderAmount = minOrderAmount;
+        setName(name);
+        setAddress(address);
+        setDescription(description);
+        setPhoneNumber(phoneNumber);
+        setOpenTime(openTime);
+        setCloseTime(closeTime);
+        setMinOrderAmount(minOrderAmount);
     }
 
     protected Restaurant() {
@@ -65,7 +66,7 @@ public class Restaurant extends BaseEntity{
         return closeTime;
     }
 
-    @Column(name = "min_order_amount")
+    @Column(name = "min_order_amount", nullable = false)
     public BigDecimal getMinOrderAmount() {
         return minOrderAmount;
     }
@@ -81,44 +82,71 @@ public class Restaurant extends BaseEntity{
     }
 
     public void setName(String name) {
+        if (name == null || name.trim().length() < 2) {
+            throw new InvalidValueException("Name must be at least 2 characters and not null");
+        }
         this.name = name;
     }
 
     public void setAddress(String address) {
+        if (address == null || address.trim().length() < 10) {
+            throw new InvalidValueException("Address must be at least 10 characters long and not null");
+        }
         this.address = address;
     }
 
     public void setDescription(String description) {
+        if (description != null && description.length() > 700) throw new InvalidValueException("Description must be at most 700 characters");
         this.description = description;
     }
 
     public void setPhoneNumber(String phoneNumber) {
+        if (phoneNumber != null && !phoneNumber.matches("\\+?[0-9-]+")) {
+            throw new InvalidValueException("Phone number must only contain digits and optional '+'");
+        }
         this.phoneNumber = phoneNumber;
     }
 
     public void setOpenTime(LocalTime openTime) {
+        if (openTime == null) {
+            throw new InvalidValueException("Open time must not be null");
+        }
         this.openTime = openTime;
     }
 
     public void setCloseTime(LocalTime closeTime) {
+        if (closeTime == null) {
+            throw new InvalidValueException("Close time must not be null");
+        }
         this.closeTime = closeTime;
     }
 
     public void setMinOrderAmount(BigDecimal minOrderAmount) {
+        if (minOrderAmount == null || minOrderAmount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidValueException("Min order amount must not be null and must be 0 or greater");
+        }
         this.minOrderAmount = minOrderAmount;
     }
 
-    public void setOrders(Set<Order> orders) {
+    protected void setOrders(Set<Order> orders) {
         this.orders = orders;
     }
 
-    public void setDishes(Set<Dish> dishes) {
+    protected void setDishes(Set<Dish> dishes) {
         this.dishes = dishes;
     }
 
 
     public boolean checkIsOpenNow() {
-        LocalTime currentTime = LocalTime.now();
-        return !currentTime.isBefore(openTime) && currentTime.isBefore(closeTime);
+        int openMinutes = openTime.toSecondOfDay() / 60;
+        int closeMinutes = closeTime.toSecondOfDay() / 60;
+        int currentMinutes = LocalTime.now().toSecondOfDay() / 60;
+
+        // Если время закрытия позже времени открытия (через полуночь)
+        if (closeMinutes < openMinutes) {
+            return currentMinutes >= openMinutes || currentMinutes < closeMinutes;
+        } else {
+            return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
+        }
     }
 }

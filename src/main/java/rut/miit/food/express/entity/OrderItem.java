@@ -1,6 +1,7 @@
 package rut.miit.food.express.entity;
 
 import jakarta.persistence.*;
+import rut.miit.food.express.exception.InvalidValueException;
 
 @Entity
 @Table(name = "order_items")
@@ -9,10 +10,10 @@ public class OrderItem extends BaseEntity {
     private Order order;
     private Dish dish;
 
-    public OrderItem(Integer count, Order order, Dish dish) {
-        this.count = count;
-        this.order = order;
-        this.dish = dish;
+    protected OrderItem( Dish dish, Integer count, Order order) {
+        setDish(dish);
+        setCount(count);
+        setOrder(order);
     }
 
     protected OrderItem() {
@@ -35,15 +36,24 @@ public class OrderItem extends BaseEntity {
         return dish;
     }
 
-    public void setCount(Integer count) {
+    protected void setCount(Integer count) {
+        if (count == null || count < 0) {
+            throw new InvalidValueException("Count must not be null and must be 0 or greater");
+        }
         this.count = count;
     }
 
-    public void setOrder(Order order) {
+    protected void setOrder(Order order) {
+        if (order == null) {
+            throw new InvalidValueException("Order must not be null");
+        }
         this.order = order;
     }
 
-    public void setDish(Dish dish) {
+    protected void setDish(Dish dish) {
+        if (dish == null) {
+            throw new InvalidValueException("Dish must not be null");
+        }
         this.dish = dish;
     }
 }
