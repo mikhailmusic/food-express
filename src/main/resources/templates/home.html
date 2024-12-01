@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main class="flex-shrink-0">
+    <div class="container p-3">
+        <h2 class="mb-5 fw-light text-center">Food-Express - сервис для заказа еды</h2>
+
+        <div class="row justify-content-center">
+            <div class="col-md-7 d-flex flex-column gap-2">
+                <div class="card shadow-sm"
+                     th:each="restaurant, iterStat : ${model.restaurants}">
+                    <a th:href="@{/restaurants/{id}(id=${restaurant.id})}"
+                       class="text-decoration-none text-reset card-body">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title " th:text="${(iterStat.index + 1) + '. ' + restaurant.name}"></h5>
+                            <span class="badge bg-success" th:text="${'Рейтинг: ' + restaurant.rating}"></span>
+                        </div>
+
+                        <span class="badge bg-primary" th:text="${'Отзывов: ' + restaurant.countReview}"></span>
+                        <span class="badge bg-dark" th:text="${'Заказов: ' + restaurant.countOrder}"></span>
+
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</main>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>

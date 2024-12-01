@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="container-fluid p-3">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4 text-center">
+                <h2 th:text="${model.restaurant.name}" class="mb-2 fw-light"></h2>
+            </div>
+            <div class="col-4 text-end">
+                <a th:href="@{/restaurants/{id}/orders(id=${model.restaurant.id})}" class="btn btn-primary">Заказы</a>
+                <a th:href="@{/restaurants/{id}/add-dish(id=${model.restaurant.id})}" class="btn btn-success">Добавить блюдо</a>
+                <a th:href="@{/restaurants/{id}/edit(id=${model.restaurant.id})}" class="btn btn-secondary">Изменить</a>
+            </div>
+        </div>
+
+        <div class="text-p" th:object="${model.restaurant}">
+            <p>Идентификатор: <b th:text="*{id}"></b></p>
+            <p>Время работы: <b th:text="*{openTime + '-' + closeTime}"></b></p>
+            <p>Адрес: <b th:text="*{address}"></b></p>
+            <p>Номер телефона: <b th:text="*{phoneNumber}"></b></p>
+            <p>Минимальная сумма заказа: <b th:text="*{minOrderAmount}"></b></p>
+            <p th:text="*{description}"></p>
+        </div>
+
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4 text-center">
+                <h4>Отзывы</h4>
+            </div>
+            <div class="col-4 text-end">
+                <a th:href="@{/restaurants/{id}(id=${model.restaurant.id})}" class="btn btn-primary text-end">Блюда</a>
+            </div>
+        </div>
+
+        <div class="row mt-3 justify-content-center">
+            <div class="col-md-6">
+                <div th:each="review : ${model.reviews}" class="card mb-1 mx-auto">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold" th:text="${'Оценка: '+ review.rating}"></span>
+                            <span class="text-muted" th:text="${#temporals.format(review.date, 'HH:mm dd.MM.yyyy')}"></span>
+                        </div>
+                        <p class="card-text" th:text="${review.text}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>

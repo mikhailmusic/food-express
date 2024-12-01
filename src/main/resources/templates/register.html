@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<main class="d-flex justify-content-center align-items-center vh-100">
+    <div class="col-md-5">
+        <div class="card card-body shadow-sm">
+            <h3 class="card-title text-center">Регистрация</h3>
+            <form th:action="@{/auth/register}" th:object="${form}" th:method="post" >
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="registerName" class="form-label">Имя</label>
+                        <input th:field="*{firstName}" th:errorclass="is-invalid" type="text" class="form-control" id="registerName">
+                        <small th:if="${#fields.hasErrors('firstName')}"
+                               th:errors="*{firstName}"
+                               class="text-danger">Error message</small>
+
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="login" class="form-label">Логин</label>
+                        <input th:field="*{login}" th:errorclass="is-invalid" type="text" class="form-control" id="login">
+                        <small th:if="${#fields.hasErrors('login')}"
+                               th:errors="*{login}"
+                               class="text-danger">Error message</small>
+                    </div>
+
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="address" class="form-label">Адрес</label>
+                        <input th:field="*{address}" th:errorclass="is-invalid" type="text" class="form-control" id="address" >
+                        <small th:if="${#fields.hasErrors('address')}"
+                               th:errors="*{address}"
+                               class="text-danger">Error message</small>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="birthDate" class="form-label">Дата рождения</label>
+                        <input th:field="*{birthDate}" th:errorclass="is-invalid" type="date" class="form-control" id="birthDate">
+                        <small th:if="${#fields.hasErrors('birthDate')}"
+                               th:errors="*{birthDate}"
+                               class="text-danger">Error message</small>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input th:field="*{password}" th:errorclass="is-invalid" type="password" class="form-control" id="password">
+                        <small th:if="${#fields.hasErrors('password')}"
+                               th:errors="*{password}"
+                               class="text-danger">Error message</small>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="confirmPassword" class="form-label">Подтвердите пароль</label>
+                        <input th:field="*{confirmPassword}" th:errorclass="is-invalid" type="password" class="form-control" id="confirmPassword">
+                        <small th:if="${#fields.hasErrors('confirmPassword')}"
+                               th:errors="*{confirmPassword}"
+                               class="text-danger">Error message</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-dark w-100">Зарегистрироваться</button>
+                <div class="mt-3">
+                    <p>Есть аккаунт? <a th:href="@{/auth/login}">Войти</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</main>
+</body>
+
+
+</html>

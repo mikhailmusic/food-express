@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="container p-3 col-md-4">
+        <h2 class="mb-4 fw-light text-center">Добавление отзыва к заказу</h2>
+
+        <form th:action="@{/orders/{id}/add-review(id=${form.orderId})}" th:object="${form}" th:method="post">
+            <input th:field="*{orderId}" type="hidden" id="id" class="form-control text-center"/>
+            <div class="mb-2">
+                <label for="rating" class="form-label">Оценка (1-5)</label>
+                <input th:field="*{rating}" th:errorclass="is-invalid" type="number" class="form-control"
+                       id="rating" min="1" max="5" step="1">
+                <small th:if="${#fields.hasErrors('rating')}"
+                       th:errors="*{rating}"
+                       class="text-danger">Error message</small>
+            </div>
+            <div class="mb-2">
+                <label for="text" class="form-label">Комментарий</label>
+                <textarea th:field="*{text}" th:errorclass="is-invalid" class="form-control" id="text" rows="2"></textarea>
+                <small th:if="${#fields.hasErrors('text')}"
+                       th:errors="*{text}"
+                       class="text-danger">Error message</small>
+            </div>
+
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-secondary">Добавить отзыв</button>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<div th:fragment="dish-card" class="card card-md card-text">
+
+    <img th:src="${dish.imageURL}" class="card-img-top">
+
+    <a th:text="${dish.name}" th:href="@{/dishes/{id}(id=${dish.id})}" class="text-center text-reset text-decoration-none">Название блюда</a>
+    <b th:text="${dish.price} + ' ₽'" class="text-center">Цена</b>
+
+    <div class="d-flex justify-content-between align-items-center p-2">
+        <small class="text-muted">
+            <span th:text="${dish.calories} + ' ккал'">Калории</span>,
+            <span th:text="${dish.weight} + ' г'">Вес</span>
+        </small>
+        <a sec:authorize="isAuthenticated()" th:href="@{/orders/add/add-item/{dishId}(dishId=${dish.id})}" class="btn btn-primary w-50">+ Добавить</a>
+    </div>
+
+</div>
+

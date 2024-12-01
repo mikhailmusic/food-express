@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="container p-3 col-md-8 col-xl-5">
+        <h2 class="mb-4 fw-light text-center">Изменение информации о ресторане</h2>
+        <form th:action="@{/admin/restaurants/{id}/edit(id=${form.id})}" th:object="${form}" th:method="post">
+
+            <input th:field="*{id}" type="hidden" id="id" class="form-control text-center"/>
+            <div class="mb-2">
+                <label for="name" class="form-label">Название</label>
+                <input th:field="*{name}" th:errorclass="is-invalid" type="text" class="form-control" id="name">
+                <small th:if="${#fields.hasErrors('name')}"
+                       th:errors="*{name}"
+                       class="text-danger">Error message</small>
+            </div>
+
+            <div class="mb-2">
+                <label for="address" class="form-label">Адрес</label>
+                <input th:field="*{address}" th:errorclass="is-invalid" type="text" class="form-control" id="address">
+                <small th:if="${#fields.hasErrors('address')}"
+                       th:errors="*{address}"
+                       class="text-danger">Error message</small>
+            </div>
+
+            <div class="mb-2">
+                <label for="description" class="form-label">Описание</label>
+                <textarea th:field="*{description}" th:errorclass="is-invalid" class="form-control" id="description"
+                          rows="2"></textarea>
+                <small th:if="${#fields.hasErrors('description')}"
+                       th:errors="*{description}"
+                       class="text-danger">Error message</small>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <label for="phoneNumber" class="form-label">Номер телефона</label>
+                    <input th:field="*{phoneNumber}" th:errorclass="is-invalid" type="tel" class="form-control"
+                           id="phoneNumber">
+                    <small th:if="${#fields.hasErrors('phoneNumber')}"
+                           th:errors="*{phoneNumber}"
+                           class="text-danger">Error message</small>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label for="minOrderAmount" class="form-label">Минимальная сумма заказа</label>
+                    <input th:field="*{minOrderAmount}" th:errorclass="is-invalid" type="number" class="form-control"
+                           id="minOrderAmount" step="0.01">
+                    <small th:if="${#fields.hasErrors('minOrderAmount')}"
+                           th:errors="*{minOrderAmount}"
+                           class="text-danger">Error message</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <label for="openTime" class="form-label">Время открытия</label>
+                    <input th:field="*{openTime}" th:errorclass="is-invalid" type="time" class="form-control"
+                           id="openTime">
+                    <small th:if="${#fields.hasErrors('openTime')}"
+                           th:errors="*{openTime}"
+                           class="text-danger">Error message</small>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label for="closeTime" class="form-label">Время закрытия</label>
+                    <input th:field="*{closeTime}" th:errorclass="is-invalid" type="time" class="form-control"
+                           id="closeTime">
+                    <small th:if="${#fields.hasErrors('closeTime')}"
+                           th:errors="*{closeTime}"
+                           class="text-danger">Error message</small>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-secondary">Обновить информацию</button>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="container p-3">
+        <h2 class="mb-2 fw-light text-center">Популярные блюда</h2>
+
+        <div class="row px-5">
+
+                <div th:id="${category.name}" th:each="category : ${model.category}">
+                    <h4 th:text="${category.name}" class="mb-3"></h4>
+                    <div class="d-flex flex-wrap gap-1 mb-3">
+                        <div th:each="dish : ${category.dishes}" class="card-container">
+                            <div th:replace="~{fragments/dish-card}"></div>
+                        </div>
+
+                    </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</main>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>

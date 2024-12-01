@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="container p-3 col-md-4">
+        <h2 class="mb-5 fw-light text-center">Добавление категории</h2>
+
+        <form th:action="@{/admin/categories/add}" th:object="${form}" th:method="post">
+            <div class="mb-2">
+                <label for="name" class="form-label">Название</label>
+                <input th:field="*{name}" th:errorclass="is-invalid" type="text" class="form-control" id="name">
+                <small th:if="${#fields.hasErrors('name')}"
+                       th:errors="*{name}"
+                       class="text-danger">Error message</small>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-secondary">Добавить категорию</button>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>

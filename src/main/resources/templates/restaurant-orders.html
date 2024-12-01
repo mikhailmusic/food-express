@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main class="container py-3 col-md-5">
+    <h2 class="mb-4 fw-light text-center">Заказы</h2>
+
+    <div th:each="order : ${model.orders}" class="card mb-1">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h5 class="card-title">Заказ #<span th:text="${order.id}"></span></h5>
+                <p th:text="${'Статус: '+ order.status}" class="card-text"></p>
+            </div>
+
+            <p th:text="${'Создан: ' + #temporals.format(order.creationTime, 'HH:mm dd.MM.yyyy')}"
+               class="text-muted card-subtitle"></p>
+
+            <h6>Состав заказа:</h6>
+            <div class="d-flex flex-wrap gap-1">
+                <a th:href="@{/dishes/{id}(id=${item.dishId})}" th:each="item : ${order.orderItems}" th:if="${item.count != 0}"
+                   class="card text-decoration-none" >
+                    <img th:src="${item.imageURL}" class="min-img" alt="Блюдо">
+                    <div class="card-body p-2">
+                        <h6 class="card-title mb-1" th:text="${item.dishName}"></h6>
+                        <p class="card-text small text-muted">Количество: <span th:text="${item.count}"></span></p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="text-end" th:if="${order.status != 'DELIVERED'}">
+                <a th:href="@{/orders/{id}/add-re(id=${order.id})}" class="btn btn-primary">Следующий статус</a>
+            </div>
+
+
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>

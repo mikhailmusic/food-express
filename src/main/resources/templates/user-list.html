@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main class="flex-shrink-0">
+    <div class="container p-3">
+        <h2 class="mb-4 fw-light text-center">Пользователи</h2>
+        <div class="row row-cols-1 row-cols-md-4 g-2">
+            <div class="col"  th:each="user : ${model.users}">
+                <a th:href="@{/users/{id}(id=${user.id})}" class="card h-100 text-decoration-none">
+                    <div class="card-body text-p">
+                        <h4 th:text="${user.login}" class="card-title"></h4>
+                        <p th:text="${'Имя: ' + user.firstName}"></p>
+                        <p th:text="${'Идентификатор: ' + user.id}"></p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>

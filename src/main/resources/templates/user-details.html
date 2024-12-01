@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="container p-3 col-md-4">
+        <h2 class="mb-5 fw-light text-center">Профиль</h2>
+
+        <div th:object="${model.user}">
+            <p>Идентификатор: <b th:text="*{id}"></b></p>
+            <p>Логин: <b th:text="*{login}"></b></p>
+            <p>Имя: <b th:text="*{firstName}"></b></p>
+            <p>Дата рождения: <b th:text="*{#temporals.format(birthDate, 'dd.MM.yyyy')}"></b></p>
+            <p>Адрес: <b th:text="*{address}"></b></p>
+            <p>Номер телефона: <b th:text="*{phoneNumber}"></b></p>
+
+
+            <div class="mt-5 text-center">
+                <a class="btn btn-secondary w-50" th:href="@{/users/{id}/edit(id=${id})}">Изменить профиль</a>
+                <a class="btn btn-secondary w-50 mt-2" th:href="@{/users/{id}/change-password(id=${id})}">Изменить пароль</a>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</main>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>
