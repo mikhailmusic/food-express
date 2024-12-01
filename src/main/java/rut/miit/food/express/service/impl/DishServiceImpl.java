@@ -23,9 +23,7 @@ import rut.miit.food.express.repository.OrderRepository;
 import rut.miit.food.express.repository.RestaurantRepository;
 import rut.miit.food.express.service.DishService;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -117,15 +115,15 @@ public class DishServiceImpl implements DishService {
                         OrderItem::getDish, Collectors.summingLong(OrderItem::getCount)
                 ));
         Map<DishCategory, List<Dish>> dishesByCategory = dishOrderCount.keySet().stream()
-                .collect(Collectors.groupingBy(
-                        Dish::getCategory,
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                dishes -> dishes.stream()
-                                        .sorted((dish1, dish2) -> Long.compare(dishOrderCount.get(dish2), dishOrderCount.get(dish1)))
-                                        .limit(4).toList()
-                        )
-                ));
+                .collect(Collectors.groupingBy(Dish::getCategory, Collectors.toList()));
+
+        for (Map.Entry<DishCategory, List<Dish>> entry : dishesByCategory.entrySet()) {
+            List<Dish> dishes = entry.getValue();
+            dishes.sort((dish1, dish2) -> Long.compare(dishOrderCount.get(dish2), dishOrderCount.get(dish1)));
+            if (dishes.size() > 4) {
+                dishes.subList(4, dishes.size()).clear();
+            }
+        }
         return toDtoByCategory(dishesByCategory);
     }
 

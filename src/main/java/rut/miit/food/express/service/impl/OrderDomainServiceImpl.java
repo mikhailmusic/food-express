@@ -104,7 +104,6 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
 
-
     private OrderDto toDto(Order order) {
         if (order == null) {
             return null;
@@ -121,40 +120,4 @@ public class OrderDomainServiceImpl implements OrderDomainService {
         return new OrderDto(order.getId(), order.getCreationTime(), order.getDeliveryTime(), order.getStatus(),
                 order.getRestaurant().getId(), order.getRestaurant().getName(), orderItems, reviewDto);
     }
-
-//    @Override
-//    public OrderDto placeOrder(OrderDto orderDto) {
-//        User user = userRepository.findById(orderDto.getUserId())
-//                .orElseThrow(() -> new NotFoundException("User Not Found: " + orderDto.getUserId()));
-//        Restaurant restaurant = restaurantRepository.findById(orderDto.getRestaurantId())
-//                .orElseThrow(() -> new NotFoundException("Restaurant Not Found: " + orderDto.getRestaurantId()));
-//
-//        if (!restaurant.checkIsOpenNow()) throw new ValidationException("Restaurant is now closed");
-//        if (orderDto.getOrderItems() == null || orderDto.getOrderItems().isEmpty()) {
-//            throw new ValidationException("Order must contain at least one dish");
-//        }
-//
-//        Order order = new Order(user, restaurant);
-//        BigDecimal totalAmount = BigDecimal.valueOf(0);
-//        for (OrderItemDto orderItemDto : orderDto.getOrderItems()) {
-//            Dish dish = dishRepository.findById(orderItemDto.getDishId())
-//                    .orElseThrow(() -> new NotFoundException("Dish Not Found: " + orderItemDto.getDishId()));;
-//            if (!dish.getRestaurant().getId().equals(restaurant.getId())) {
-//                throw new ValidationException("Dish does not belong to this restaurant");
-//            }
-//            int count = orderItemDto.getCount();
-//            if (count < 0) throw new ValidationException("Count cannot be negative: " + count);
-//            OrderItem orderItem = new OrderItem(count, order, dish);
-//            totalAmount = totalAmount.add(dish.getPrice().multiply(BigDecimal.valueOf(count)));
-//
-//            order.addOrderItem(orderItem);
-//        }
-//        if (totalAmount.compareTo(restaurant.getMinOrderAmount()) < 0) {
-//            throw new ValidationException("Order amount is less than the minimum order amount in the restaurant");
-//        }
-//
-//        orderRepository.save(order);
-//
-//        return modelMapper.map(order, OrderDto.class);
-//    }
 }

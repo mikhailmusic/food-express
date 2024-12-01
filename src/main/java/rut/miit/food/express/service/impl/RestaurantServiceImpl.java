@@ -95,12 +95,13 @@ public class RestaurantServiceImpl implements RestaurantService {
         for (Restaurant restaurant : restaurantRepository.findAllWithOrders()) {        // EAGER
             List<Order> orders = restaurant.getOrders().stream()
                     .filter(order -> order.getStatus() == OrderStatus.DELIVERED).toList();
-            float averageRating = (float) orders.stream().map(Order::getReview).filter(Objects::nonNull).mapToInt(Review::getRating)
-                    .average().orElse(0.0);
-            int countOrder = orders.size();
-            int countReview = (int) orders.stream().map(Order::getReview).filter(Objects::nonNull).count();
-            if (countReview < 1) continue;
-            RestaurantRatingDto dto = new RestaurantRatingDto(restaurant.getId(), restaurant.getName(), countOrder, countReview, Math.round(averageRating * 10) / 10.0f);
+            List<Review> reviews = orders.stream().map(Order::getReview).filter(Objects::nonNull).toList();
+
+            if (reviews.isEmpty()) continue;
+
+            float averageRating = (float) reviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+            RestaurantRatingDto dto = new RestaurantRatingDto(restaurant.getId(), restaurant.getName(), orders.size(),
+                    reviews.size(), Math.round(averageRating * 10) / 10.0f);
             dtoList.add(dto);
         }
         return dtoList.stream().sorted(Comparator.comparingDouble(RestaurantRatingDto::averageRating).reversed()).limit(5).toList();
