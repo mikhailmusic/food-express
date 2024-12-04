@@ -16,13 +16,7 @@
                        class="text-danger">Error message</small>
 
             </div>
-            <div class="mb-2">
-                <label for="login" class="form-label">Логин</label>
-                <input th:field="*{login}" th:errorclass="is-invalid" type="text" class="form-control" id="login">
-                <small th:if="${#fields.hasErrors('login')}"
-                       th:errors="*{login}"
-                       class="text-danger">Error message</small>
-            </div>
+
             <div class="mb-2">
                 <label for="phoneNumber" class="form-label">Номер телефона</label>
                 <input th:field="*{phoneNumber}" th:errorclass="is-invalid" type="tel" class="form-control" id="phoneNumber">

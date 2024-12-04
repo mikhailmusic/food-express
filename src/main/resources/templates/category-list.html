@@ -21,7 +21,7 @@
 
         <div class="row row-cols-md-4 g-1">
             <div class="col"  th:each="category : ${model.categories}">
-                <div class="card h-100 text-decoration-none">
+                <div class="card text-decoration-none">
                     <div class="card-body">
                         <h5 th:text="${category.name}" class="card-title"></h5>
                     </div>

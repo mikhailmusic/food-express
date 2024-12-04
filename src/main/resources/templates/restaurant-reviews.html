@@ -41,7 +41,10 @@
                 <div th:each="review : ${model.reviews}" class="card mb-1 mx-auto">
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="fw-bold" th:text="${'Оценка: '+ review.rating}"></span>
+                            <div>
+                                <span class="fw-bold" th:text="${'Оценка: '+ review.rating}"></span>
+                                <span class="fw-bold px-4" th:text="${review.userFirstName}"></span>
+                            </div>
                             <span class="text-muted" th:text="${#temporals.format(review.date, 'HH:mm dd.MM.yyyy')}"></span>
                         </div>
                         <p class="card-text" th:text="${review.text}"></p>

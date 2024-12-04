@@ -26,14 +26,14 @@
                               class="d-flex justify-content-end">
                             <input type="hidden" name="itemId" th:value="${item.id}"/>
 
-                            <button type="submit" name="newCount" th:value="${item.count - 1}"
+                            <button type="submit" name="count" th:value="${item.count - 1}"
                                     class="btn btn-outline-danger btn-sm"
                                     th:disabled="${item.count <= 0}">-
                             </button>
 
                             <input type="text" th:value="${item.count}" readonly
                                    class="form-control text-center mx-2 w-25">
-                            <button type="submit" name="newCount" th:value="${item.count + 1}"
+                            <button type="submit" name="count" th:value="${item.count + 1}"
                                     class="btn btn-outline-success">+
                             </button>
 
