@@ -13,7 +13,7 @@
             <p>Имя: <b th:text="*{firstName}"></b></p>
             <p>Дата рождения: <b th:text="*{#temporals.format(birthDate, 'dd.MM.yyyy')}"></b></p>
             <p>Адрес: <b th:text="*{address}"></b></p>
-            <p>Номер телефона: <b th:text="*{phoneNumber}"></b></p>
+            <p>Номер телефона: <b th:text="*{phoneNumber} != null ? *{phoneNumber} : 'Не указан'"></b></p>
 
 
             <div class="mt-5 text-center">
