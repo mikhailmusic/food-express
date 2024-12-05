@@ -11,6 +11,12 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
+  redis:
+    image: redis:latest
+    container_name: food-express-redis
+    ports:
+      - "6379:6379"
+
   pgadmin:
     container_name: pgadmin4-8.11
     image: dpage/pgadmin4:8.11
