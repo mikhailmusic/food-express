@@ -14,8 +14,8 @@ public class DishCategory extends BaseEntity{
     private String name;
     private Set<Dish> dishes;
 
-    public DishCategory(String name) {
-        setName(name);
+    public DishCategory(String name, Set<String> existingCategoryNames) {
+        setName(name, existingCategoryNames);
     }
 
     protected DishCategory() {
@@ -40,6 +40,17 @@ public class DishCategory extends BaseEntity{
 
     protected void setDishes(Set<Dish> dishes) {
         this.dishes = dishes;
+    }
+
+    protected void setName(String name, Set<String> existingCategoryNames) {
+        if (this.name != null) {
+            existingCategoryNames.remove(this.name);
+        }
+
+        if (name != null && existingCategoryNames.contains(name)) {
+            throw new InvalidValueException("Category with this name already exists: " + name);
+        }
+        setName(name);
     }
 }
 

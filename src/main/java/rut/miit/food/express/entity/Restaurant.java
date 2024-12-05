@@ -23,8 +23,8 @@ public class Restaurant extends BaseEntity{
     private Set<Order> orders;
     private Set<Dish> dishes;
 
-    public Restaurant(String name, String address, String description, String phoneNumber, LocalTime openTime, LocalTime closeTime, BigDecimal minOrderAmount) {
-        setName(name);
+    public Restaurant(String name, String address, String description, String phoneNumber, LocalTime openTime, LocalTime closeTime, BigDecimal minOrderAmount, Set<String> existingNames) {
+        setName(name, existingNames);
         setAddress(address);
         setDescription(description);
         setPhoneNumber(phoneNumber);
@@ -41,7 +41,7 @@ public class Restaurant extends BaseEntity{
         return name;
     }
 
-    @Column(name = "address", nullable = false, unique = true)
+    @Column(name = "address", nullable = false)
     public String getAddress() {
         return address;
     }
@@ -51,7 +51,7 @@ public class Restaurant extends BaseEntity{
         return description;
     }
 
-    @Column(name = "phone_number", nullable = false, unique = true)
+    @Column(name = "phone_number", nullable = false)
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -81,7 +81,7 @@ public class Restaurant extends BaseEntity{
         return dishes;
     }
 
-    public void setName(String name) {
+    protected void setName(String name) {
         if (name == null || name.trim().length() < 2) {
             throw new InvalidValueException("Name must be at least 2 characters and not null");
         }
@@ -148,5 +148,16 @@ public class Restaurant extends BaseEntity{
         } else {
             return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
         }
+    }
+
+    public void setName(String name, Set<String> existingNames) {
+        if (this.name != null) {
+            existingNames.remove(this.name);
+        }
+
+        if (name != null && existingNames.contains(name)) {
+            throw new InvalidValueException("Restaurant with this name already exists: " + name);
+        }
+        setName(name);
     }
 }

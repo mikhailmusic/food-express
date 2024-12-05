@@ -19,9 +19,9 @@ public class User extends BaseEntity{
     private Set<Order> orders;
     private Set<Review> reviews;
 
-    public User(String firstName, String login, String address, LocalDate birthDate, String password, String confirmPassword) {
+    public User(String firstName, String login, String address, LocalDate birthDate, String password, String confirmPassword, Set<String> existingLogins) {
+        setLogin(login, existingLogins);
         setFirstName(firstName);
-        setLogin(login);
         setAddress(address);
         setBirthDate(birthDate);
         setPassword(password, confirmPassword);
@@ -77,11 +77,11 @@ public class User extends BaseEntity{
         this.firstName = firstName;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        if (phoneNumber != null && !phoneNumber.matches("\\+?[0-9-]+")) {
+    protected void setPhoneNumber(String phoneNumber) {
+        if (phoneNumber != null && !phoneNumber.isBlank() && !phoneNumber.matches("\\+?[0-9-]+")) {
             throw new InvalidValueException("Phone number must only contain digits and optional '+'");
         }
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = (phoneNumber != null && phoneNumber.isBlank()) ? null : phoneNumber;
     }
 
     public void setAddress(String address) {
@@ -104,7 +104,7 @@ public class User extends BaseEntity{
         this.birthDate = birthDate;
     }
 
-    public void setLogin(String login) {
+    protected void setLogin(String login) {
         if (login == null || login.trim().length() < 5) {
             throw new InvalidValueException("Login must not be null and must be at least 5 characters long");
         }
@@ -147,5 +147,23 @@ public class User extends BaseEntity{
             return false;
         }
         return true;
+    }
+
+    protected void setLogin(String login, Set<String> existingLogins) {
+        if (existingLogins.contains(login)) {
+            throw new InvalidValueException("Login is incorrect");
+        }
+        setLogin(login);
+    }
+
+    public void setPhoneNumber(String phoneNumber, Set<String> existingPhoneNumbers) {
+        if (this.phoneNumber != null) {
+            existingPhoneNumbers.remove(this.phoneNumber);
+        }
+
+        if (phoneNumber != null && existingPhoneNumbers.contains(phoneNumber)) {
+            throw new InvalidValueException("Phone number already exists: " + phoneNumber);
+        }
+        setPhoneNumber(phoneNumber);
     }
 }

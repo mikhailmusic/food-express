@@ -61,7 +61,7 @@ public class Review extends BaseEntity{
             throw new InvalidValueException("Text must be at most 500 characters long");
         }
 
-        this.text = (text != null && text.trim().isEmpty()) ? null : text;
+        this.text = (text != null && text.isBlank()) ? null : text;
     }
 
     protected void setRating(Integer rating) {
