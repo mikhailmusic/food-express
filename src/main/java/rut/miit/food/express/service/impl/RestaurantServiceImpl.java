@@ -1,6 +1,7 @@
 package rut.miit.food.express.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -11,14 +12,13 @@ import rut.miit.food.express.dto.restaurant.RestaurantDto;
 import rut.miit.food.express.dto.restaurant.RestaurantRatingDto;
 import rut.miit.food.express.entity.Order;
 import rut.miit.food.express.entity.Restaurant;
-import rut.miit.food.express.entity.Review;
 import rut.miit.food.express.entity.enums.OrderStatus;
-import rut.miit.food.express.exception.NotFoundException;
-import rut.miit.food.express.exception.ValidationException;
+import rut.miit.food.express.exception.RestaurantNotFoundException;
 import rut.miit.food.express.repository.RestaurantRepository;
 import rut.miit.food.express.service.RestaurantService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
@@ -31,38 +31,31 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Integer registerRestaurant(RestaurantAddDto dto) {
-        // TODO: телефон, адрес
-        if (restaurantRepository.findByName(dto.name()).isEmpty()) {
-            Restaurant restaurant = new Restaurant(dto.name(), dto.address(), dto.description(), dto.phoneNumber(), dto.openTime(), dto.closeTime(), dto.minOrderAmount());
-            return restaurantRepository.save(restaurant).getId();
-        } else {
-            throw new ValidationException("Restaurant with this name already exists");
-        }
+        Set<String> existingNames = restaurantRepository.findAllNames();
+
+        Restaurant restaurant = new Restaurant(dto.name(), dto.address(), dto.description(), dto.phoneNumber(), dto.openTime(), dto.closeTime(), dto.minOrderAmount(), existingNames);
+        return restaurantRepository.save(restaurant).getId();
     }
 
     @Override
     public void changeRestaurantInfo(RestaurantDto dto) {
-        // TODO: телефон, адрес
-        Restaurant restaurant = restaurantRepository.findById(dto.id()).orElseThrow(() -> new NotFoundException("Restaurant Not Found: " + dto.id()));
-        Optional<Restaurant> restaurantEqualsName = restaurantRepository.findByName(dto.name());
-        if (restaurantEqualsName.isEmpty() || restaurantEqualsName.get().getId().equals(dto.id())) {
-            restaurant.setName(dto.name());
-            restaurant.setAddress(dto.address());
-            restaurant.setDescription(dto.description());
-            restaurant.setPhoneNumber(dto.phoneNumber());
-            restaurant.setOpenTime(dto.openTime());
-            restaurant.setCloseTime(dto.closeTime());
-            restaurant.setMinOrderAmount(dto.minOrderAmount());
-            restaurantRepository.save(restaurant);
-        } else {
-            throw new ValidationException("Restaurant with this name already exists");
-        }
+        Set<String> existingNames = restaurantRepository.findAllNames();
+        Restaurant restaurant = restaurantRepository.findById(dto.id()).orElseThrow(() -> new RestaurantNotFoundException(dto.id()));
+
+        restaurant.setName(dto.name(), existingNames);
+        restaurant.setAddress(dto.address());
+        restaurant.setDescription(dto.description());
+        restaurant.setPhoneNumber(dto.phoneNumber());
+        restaurant.setOpenTime(dto.openTime());
+        restaurant.setCloseTime(dto.closeTime());
+        restaurant.setMinOrderAmount(dto.minOrderAmount());
+        restaurantRepository.save(restaurant);
+
     }
 
     @Override
     public RestaurantDto getRestaurantDetails(Integer id) {
-        Restaurant restaurant = restaurantRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Restaurant Not Found: " + id));
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() -> new RestaurantNotFoundException(id));
         return toDto(restaurant);
     }
 
@@ -90,6 +83,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @Cacheable("top-restaurants")
     public List<RestaurantRatingDto> ratingRestaurants() {
         List<RestaurantRatingDto> dtoList = new ArrayList<>();
         for (Restaurant restaurant : restaurantRepository.findAllWithOrders()) {   // EAGER - беру все сразу - 1 запрос
@@ -113,7 +107,8 @@ public class RestaurantServiceImpl implements RestaurantService {
                     reviewCount, Math.round(averageRating * 10) / 10.0f);
             dtoList.add(dto);
         }
-        return dtoList.stream().sorted(Comparator.comparingDouble(RestaurantRatingDto::averageRating).reversed()).limit(5).toList();
+        return dtoList.stream().sorted(Comparator.comparingDouble(RestaurantRatingDto::averageRating).reversed())
+                .limit(5).collect(Collectors.toList());
     }
 
     private RestaurantDto toDto(Restaurant rest) {

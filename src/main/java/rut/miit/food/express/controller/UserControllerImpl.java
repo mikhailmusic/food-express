@@ -39,9 +39,9 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
             model.addAttribute("form", form);
             return "user-edit";
         }
-        UserUpdateDto dto = new UserUpdateDto(id, form.login(), form.firstName(), form.phoneNumber(), form.address());
+        UserUpdateDto dto = new UserUpdateDto(id, form.firstName(), form.phoneNumber(), form.address());
         userService.updateUserInfo(dto);
-        return "redirect:/users";
+        return "redirect:/admin/users";
 
     }
 
@@ -59,7 +59,7 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
 
         UserChangePasswordDto dto = new UserChangePasswordDto(id, form.oldPassword(), form.newPassword(), form.confirmPassword());
         userService.updateUserPassword(dto);
-        return "redirect:/users";
+        return "redirect:/admin/users/";
 
     }
 
@@ -84,7 +84,7 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
                 createBaseViewModel("Редактирование профиля")
         );
         model.addAttribute("model", viewModel);
-        model.addAttribute("form", new UserEditForm(dto.id(), dto.login(), dto.firstName(), dto.phoneNumber(), dto.address()));
+        model.addAttribute("form", new UserEditForm(dto.id(), dto.firstName(), dto.phoneNumber(), dto.address()));
         return "user-edit";
 
     }

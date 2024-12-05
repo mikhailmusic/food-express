@@ -1,6 +1,7 @@
 package rut.miit.food.express.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -15,8 +16,9 @@ import rut.miit.food.express.entity.DishCategory;
 import rut.miit.food.express.entity.OrderItem;
 import rut.miit.food.express.entity.Restaurant;
 import rut.miit.food.express.entity.enums.OrderStatus;
-import rut.miit.food.express.exception.NotFoundException;
-import rut.miit.food.express.exception.ValidationException;
+import rut.miit.food.express.exception.CategoryNotFoundException;
+import rut.miit.food.express.exception.DishNotFoundException;
+import rut.miit.food.express.exception.RestaurantNotFoundException;
 import rut.miit.food.express.repository.DishCategoryRepository;
 import rut.miit.food.express.repository.DishRepository;
 import rut.miit.food.express.repository.OrderRepository;
@@ -44,13 +46,10 @@ public class DishServiceImpl implements DishService {
     @Override
     public void addDish(DishAddDto dto) {
         DishCategory category = categoryRepository.findById(dto.categoryId())
-                .orElseThrow(() -> new NotFoundException("Category not found: " + dto.categoryId()));
+                .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId()));
         Restaurant restaurant = restaurantRepository.findById(dto.restaurantId())
-                .orElseThrow(() -> new NotFoundException("Restaurant not found: " + dto.restaurantId()));
+                .orElseThrow(() -> new RestaurantNotFoundException(dto.restaurantId()));
 
-        if (dishExistsInRestaurant(dto.name(), restaurant)) {
-            throw new ValidationException("Dish with this name already exists in this restaurant");
-        }
         Dish dish = new Dish(dto.name(), dto.description(), dto.price(), dto.weight(), dto.calories(),
                 dto.imageURL(), restaurant, category);
         dishRepository.save(dish);
@@ -58,9 +57,7 @@ public class DishServiceImpl implements DishService {
 
     @Override
     public void modifyDish(DishUpdateDto dto) {
-        // TODO: проверка повтора названия в этом же ресторане
-        Dish dish = dishRepository.findById(dto.id())
-                .orElseThrow(() -> new NotFoundException("Dish not found"));
+        Dish dish = dishRepository.findById(dto.id()).orElseThrow(() -> new DishNotFoundException(dto.id()));
         dish.setName(dto.name());
         dish.setDescription(dto.description());
         dish.setPrice(dto.price());
@@ -69,7 +66,7 @@ public class DishServiceImpl implements DishService {
         dish.setImageURL(dto.imageURL());
         if (dto.categoryId() != null) {
             DishCategory category = categoryRepository.findById(dto.categoryId())
-                    .orElseThrow(() -> new NotFoundException("Category not found"));
+                    .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId()));
             dish.setCategory(category);
         }
         dishRepository.save(dish);
@@ -78,7 +75,7 @@ public class DishServiceImpl implements DishService {
 
     @Override
     public DishDto getDishDetails(Integer id) {
-        Dish dish = dishRepository.findById(id).orElseThrow(() -> new NotFoundException("Dish not found: " + id));
+        Dish dish = dishRepository.findById(id).orElseThrow(() -> new DishNotFoundException(id));
         return toDto(dish);
     }
 
@@ -107,6 +104,7 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    @Cacheable("popular-dishes")
     public List<DishByCategoryDto> popularDish() {
         Map<Dish, Long> dishOrderCount = orderRepository.findAll().stream()
                 .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
@@ -128,12 +126,6 @@ public class DishServiceImpl implements DishService {
     }
 
 
-    private boolean dishExistsInRestaurant(String dishName, Restaurant restaurant) {
-        return restaurant.getDishes().stream()
-                .anyMatch(dish -> dish.getName().equalsIgnoreCase(dishName));
-    }
-
-
     private DishDto toDto(Dish dish) {
         if (dish == null) {
             return null;
@@ -149,7 +141,7 @@ public class DishServiceImpl implements DishService {
                 .map(entry -> {
                     List<DishDto> dtoList = entry.getValue().stream().map(this::toDto).toList();
                     return new DishByCategoryDto(entry.getKey().getId(), entry.getKey().getName(), dtoList.size(), dtoList);
-                }).sorted(Comparator.comparing(DishByCategoryDto::name)).toList();
+                }).sorted(Comparator.comparing(DishByCategoryDto::name)).collect(Collectors.toList());
         return dishesDtos;
     }
 }

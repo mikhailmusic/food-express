@@ -6,7 +6,7 @@ import rut.miit.food.express.dto.review.ReviewAddDto;
 import rut.miit.food.express.dto.review.ReviewDto;
 import rut.miit.food.express.entity.Order;
 import rut.miit.food.express.entity.Review;
-import rut.miit.food.express.exception.NotFoundException;
+import rut.miit.food.express.exception.OrderNotFoundException;
 import rut.miit.food.express.repository.OrderRepository;
 import rut.miit.food.express.repository.ReviewRepository;
 import rut.miit.food.express.service.ReviewService;
@@ -27,8 +27,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void leaveReview(ReviewAddDto reviewDto) {
-        Order order = orderRepository.findById(reviewDto.orderId())
-                .orElseThrow(() -> new NotFoundException("Order not found: " + reviewDto.orderId()));
+        Order order = orderRepository.findById(reviewDto.orderId()).orElseThrow(() -> new OrderNotFoundException(reviewDto.orderId()));
         Review review = new Review(reviewDto.text(), reviewDto.rating(), order, order.getUser());
         reviewRepository.save(review);
     }
@@ -44,6 +43,6 @@ public class ReviewServiceImpl implements ReviewService {
         if (review == null) {
             return null;
         }
-        return new ReviewDto(review.getText(), review.getRating(), review.getDate());
+        return new ReviewDto(review.getText(), review.getRating(), review.getDate(), review.getUser().getFirstName());
     }
 }

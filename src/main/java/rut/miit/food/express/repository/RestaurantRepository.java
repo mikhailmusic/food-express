@@ -7,6 +7,7 @@ import rut.miit.food.express.repository.generic.UpdateRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface RestaurantRepository extends
         CreateRepository<Restaurant, Integer>, ReadRepository<Restaurant, Integer>, UpdateRepository<Restaurant, Integer> {
@@ -14,6 +15,7 @@ public interface RestaurantRepository extends
     Optional<Restaurant> findByName(String name);
     List<Restaurant> findByNameContaining(String name);
     List<Restaurant> findAllWithOrders();
+    Set<String> findAllNames();
 
 }
 

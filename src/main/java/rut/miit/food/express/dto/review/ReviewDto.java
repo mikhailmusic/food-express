@@ -5,5 +5,6 @@ import java.time.LocalDateTime;
 public record ReviewDto(
         String text,
         Integer rating,
-        LocalDateTime date
+        LocalDateTime date,
+        String userFirstName
 ) {}

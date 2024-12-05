@@ -6,10 +6,13 @@ import rut.miit.food.express.repository.generic.ReadRepository;
 import rut.miit.food.express.repository.generic.UpdateRepository;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface UserRepository extends
         CreateRepository<User, Integer>, ReadRepository<User, Integer>, UpdateRepository<User, Integer> {
 
     Optional<User> findByUsername(String username);
+    Set<String> findAllUsernames();
+    Set<String> findAllPhoneNumbers();
 
 }

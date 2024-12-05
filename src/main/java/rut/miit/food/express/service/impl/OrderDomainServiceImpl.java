@@ -9,7 +9,10 @@ import rut.miit.food.express.dto.order.OrderItemUpdateDto;
 import rut.miit.food.express.dto.review.ReviewDto;
 import rut.miit.food.express.entity.*;
 import rut.miit.food.express.entity.enums.OrderStatus;
-import rut.miit.food.express.exception.NotFoundException;
+import rut.miit.food.express.exception.DishNotFoundException;
+import rut.miit.food.express.exception.EntityNotFoundException;
+import rut.miit.food.express.exception.OrderNotFoundException;
+import rut.miit.food.express.exception.UserNotFoundException;
 import rut.miit.food.express.repository.DishRepository;
 import rut.miit.food.express.repository.OrderItemRepository;
 import rut.miit.food.express.repository.OrderRepository;
@@ -39,11 +42,10 @@ public class OrderDomainServiceImpl implements OrderDomainService {
 
     @Override
     public void addOrderItemToOrder(OrderItemAddDto itemDto) {
-        User user = userRepository.findById(itemDto.userId())
-                .orElseThrow(() -> new NotFoundException("User Not Found: " + itemDto.userId()));
-        Dish dish = dishRepository.findById(itemDto.dishId())
-                    .orElseThrow(() -> new NotFoundException("Dish Not Found: " + itemDto.dishId()));
+        User user = userRepository.findById(itemDto.userId()).orElseThrow(() -> new UserNotFoundException(itemDto.userId()));
+        Dish dish = dishRepository.findById(itemDto.dishId()).orElseThrow(() -> new DishNotFoundException(itemDto.dishId()));
         Restaurant restaurant = dish.getRestaurant();
+
         Order order = user.getOrders().stream()
                 .filter(o -> o.getStatus().equals(OrderStatus.DRAFT) && o.getRestaurant().equals(restaurant))
                 .findFirst().orElse(null);
@@ -55,7 +57,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
 
     @Override
     public void changeOrderItemToOrder(OrderItemUpdateDto dto) {
-        OrderItem item = orderItemRepository.findById(dto.id()).orElseThrow(() -> new NotFoundException("OrderItem Not Found: " + dto.id()));
+        OrderItem item = orderItemRepository.findById(dto.id()).orElseThrow(() -> new EntityNotFoundException("OrderItem Not Found: " + dto.id()));
         Order order = item.getOrder();
         order.addOrder(item.getDish(), dto.newCount());
         orderItemRepository.update(item);
@@ -63,21 +65,28 @@ public class OrderDomainServiceImpl implements OrderDomainService {
 
     @Override
     public void createOrder(Integer id) {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new NotFoundException("Order Not Found: " + id));
+        Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
         order.createOrder();
         orderRepository.save(order);
     }
 
     @Override
     public void cancelOrder(Integer id) {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new NotFoundException("Order Not Found: " + id));
+        Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
         order.cancelOrder();
         orderRepository.update(order);
     }
 
     @Override
+    public void changeStatus(Integer id) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+        order.nextStatus();
+        orderRepository.update(order);
+    }
+
+    @Override
     public OrderDto getOrderDetails(Integer id) {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new NotFoundException("Order Not Found: " + id));
+        Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
         return toDto(order);
     }
 
@@ -113,9 +122,10 @@ public class OrderDomainServiceImpl implements OrderDomainService {
                 .map(item -> new OrderItemDto(item.getId(), item.getDish().getId(), item.getCount(),
                         item.getDish().getName(), item.getDish().getImageURL()))
                 .sorted(Comparator.comparing(OrderItemDto::dishName)).toList();
+        Review review = order.getReview();
         ReviewDto reviewDto = null;
-        if (order.getReview() != null){
-            reviewDto = new ReviewDto(order.getReview().getText(), order.getReview().getRating(), order.getReview().getDate());
+        if (review != null){
+            reviewDto = new ReviewDto(review.getText(), review.getRating(), review.getDate(), review.getUser().getFirstName());
         }
         return new OrderDto(order.getId(), order.getCreationTime(), order.getDeliveryTime(), order.getStatus(),
                 order.getRestaurant().getId(), order.getRestaurant().getName(), orderItems, reviewDto);

@@ -11,7 +11,6 @@ import food.express.contracts.viewmodel.dish.DishInputViewModel;
 import food.express.contracts.viewmodel.order.OrderItemViewModel;
 import food.express.contracts.viewmodel.order.OrderRestaurantListViewModel;
 import food.express.contracts.viewmodel.order.OrderRestaurantViewModel;
-import food.express.contracts.viewmodel.restaurant.RestaurantViewModel;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

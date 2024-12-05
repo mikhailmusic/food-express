@@ -89,7 +89,7 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
     public String restaurantWithReviews(@PathVariable Integer id, Model model) {
         RestaurantDto restaurantDto = restaurantService.getRestaurantDetails(id);
         List<ReviewViewModel> reviewViewModels = reviewService.reviewsForRestaurant(id)
-                .stream().map(dto -> new ReviewViewModel(dto.rating(), dto.text(), dto.date())).toList();
+                .stream().map(dto -> new ReviewViewModel(dto.rating(), dto.text(), dto.date(), dto.userFirstName())).toList();
         RestaurantReviewViewModel viewModel = new RestaurantReviewViewModel(
                 createBaseViewModel(restaurantDto.name()),
                 toViewModel(restaurantDto), reviewViewModels);

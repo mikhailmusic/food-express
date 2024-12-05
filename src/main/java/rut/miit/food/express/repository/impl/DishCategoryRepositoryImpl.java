@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 import rut.miit.food.express.entity.DishCategory;
 import rut.miit.food.express.repository.DishCategoryRepository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class DishCategoryRepositoryImpl extends BaseRepository<DishCategory, Integer> implements DishCategoryRepository {
@@ -36,5 +38,10 @@ public class DishCategoryRepositoryImpl extends BaseRepository<DishCategory, Int
         } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Set<String> findAllNames() {
+        return new HashSet<>(entityManager.createQuery("SELECT c.name FROM DishCategory c", String.class).getResultList());
     }
 }

@@ -27,7 +27,7 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
     @GetMapping
     public String listUsers(Model model){
         List<UserViewModel> userViewModels = userService.getAllUsers().stream()
-                .map(dto -> new UserViewModel(dto.id(), dto.phoneNumber(), dto.firstName(), dto.address(), dto.birthDate(), dto.login()))
+                .map(dto -> new UserViewModel(dto.id(), dto.firstName(), dto.phoneNumber(), dto.address(), dto.birthDate(), dto.login()))
                 .toList();
         UserListViewModel viewModel = new UserListViewModel(
                 createBaseViewModel("Пользователи"),

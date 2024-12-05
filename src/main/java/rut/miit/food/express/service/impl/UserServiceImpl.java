@@ -7,12 +7,12 @@ import rut.miit.food.express.dto.user.UserChangePasswordDto;
 import rut.miit.food.express.dto.user.UserUpdateDto;
 import rut.miit.food.express.dto.user.UserDto;
 import rut.miit.food.express.entity.User;
-import rut.miit.food.express.exception.NotFoundException;
-import rut.miit.food.express.exception.ValidationException;
+import rut.miit.food.express.exception.UserNotFoundException;
 import rut.miit.food.express.repository.UserRepository;
 import rut.miit.food.express.service.UserService;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -25,24 +25,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerUser(UserAddDto dto) {
+        Set<String> logins = userRepository.findAllUsernames();
 
-        // TODO: хешировать пароль! номер проверять?
-        if (userRepository.findByUsername(dto.login()).isEmpty()) {
-            User user = new User(dto.firstName(), dto.login(), dto.address(), dto.birthDate(), dto.password(), dto.confirmPassword());
-            userRepository.save(user);
-        } else {
-            throw new ValidationException("User with this username already exists");
-        }
+        // TODO: хешировать пароль!
+        User user = new User(dto.firstName(), dto.login(), dto.address(), dto.birthDate(), dto.password(), dto.confirmPassword(), logins);
+        userRepository.save(user);
     }
 
     @Override
     public void updateUserInfo(UserUpdateDto dto) {
+        Set<String> phoneNumbers = userRepository.findAllPhoneNumbers();
 
-        // TODO: хешировать пароль! номер проверять, логин добавить и проверять?
-        User user = userRepository.findById(dto.id()).orElseThrow(() -> new NotFoundException("User Not Found: " + dto.id()));
-        user.setLogin(dto.login());
+        User user = userRepository.findById(dto.id()).orElseThrow(() -> new UserNotFoundException(dto.id()));
         user.setFirstName(dto.firstName());
-        user.setPhoneNumber(dto.phoneNumber());
+        user.setPhoneNumber(dto.phoneNumber(), phoneNumbers);
         user.setAddress(dto.address());
         userRepository.save(user);
 
@@ -51,21 +47,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserPassword(UserChangePasswordDto dto) {
         // TODO: хешировать пароль!
-        User user = userRepository.findById(dto.id())
-                .orElseThrow(() -> new NotFoundException("User Not Found: " + dto.id()));
+        User user = userRepository.findById(dto.id()).orElseThrow(() -> new UserNotFoundException(dto.id()));
         user.changePassword(dto.oldPassword(), dto.newPassword(), dto.confirmNewPassword());
         userRepository.save(user);
     }
 
     @Override
     public UserDto getUser(Integer id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User Not Found: " + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return toDto(user);
     }
 
     @Override
     public UserDto getUserByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("User Not Found: " + username));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
         return toDto(user);
     }
 

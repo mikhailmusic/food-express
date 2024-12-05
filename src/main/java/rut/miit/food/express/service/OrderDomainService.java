@@ -11,10 +11,11 @@ public interface OrderDomainService {
     void changeOrderItemToOrder(OrderItemUpdateDto itemDto);
     void createOrder(Integer id);
     void cancelOrder(Integer id);
+    void changeStatus(Integer id);
+
     OrderDto getOrderDetails(Integer id);
     List<OrderDto> userOrdersDraft(Integer userId);
     List<OrderDto> restaurantOrders(Integer userId);
-
     List<OrderDto> userOrdersHistory(Integer userId);
 
 }

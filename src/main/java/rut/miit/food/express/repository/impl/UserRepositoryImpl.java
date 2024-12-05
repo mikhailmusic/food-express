@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import rut.miit.food.express.entity.User;
 import rut.miit.food.express.repository.UserRepository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class UserRepositoryImpl extends BaseRepository<User, Integer> implements UserRepository {
@@ -27,6 +29,16 @@ public class UserRepositoryImpl extends BaseRepository<User, Integer> implements
         } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Set<String> findAllUsernames() {
+        return new HashSet<>(entityManager.createQuery("SELECT u.login FROM User u", String.class).getResultList());
+    }
+
+    @Override
+    public Set<String> findAllPhoneNumbers() {
+        return new HashSet<>(entityManager.createQuery("SELECT u.phoneNumber FROM User u", String.class).getResultList());
     }
 
 }
