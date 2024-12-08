@@ -8,6 +8,7 @@ import rut.miit.food.express.entity.User;
 import rut.miit.food.express.repository.UserRepository;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,6 +30,13 @@ public class UserRepositoryImpl extends BaseRepository<User, Integer> implements
         } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<User> findByUsernameContaining(String partUsername) {
+        return entityManager.createQuery("SELECT u FROM User u WHERE LOWER(u.login) LIKE LOWER(:name)", User.class)
+                .setParameter("name", "%" + partUsername + "%")
+                .getResultList();
     }
 
     @Override

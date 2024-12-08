@@ -2,6 +2,7 @@ package rut.miit.food.express.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rut.miit.food.express.util.PageWrapper;
 import rut.miit.food.express.dto.user.UserAddDto;
 import rut.miit.food.express.dto.user.UserChangePasswordDto;
 import rut.miit.food.express.dto.user.UserUpdateDto;
@@ -10,6 +11,7 @@ import rut.miit.food.express.entity.User;
 import rut.miit.food.express.exception.UserNotFoundException;
 import rut.miit.food.express.repository.UserRepository;
 import rut.miit.food.express.service.UserService;
+import rut.miit.food.express.util.PaginationHelper;
 
 import java.util.List;
 import java.util.Set;
@@ -68,6 +70,12 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream().map(this::toDto).toList();
+    }
+
+    @Override
+    public PageWrapper<UserDto> getAllUsers(String searchQuery, int page, int size) {
+        List<UserDto> dtoList = userRepository.findByUsernameContaining(searchQuery).stream().map(this::toDto).toList();
+        return PaginationHelper.getPage(dtoList, page, size);
     }
 
     private UserDto toDto(User user) {
