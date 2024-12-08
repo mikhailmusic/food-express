@@ -19,6 +19,7 @@ import rut.miit.food.express.repository.OrderRepository;
 import rut.miit.food.express.repository.UserRepository;
 import rut.miit.food.express.service.OrderDomainService;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -113,6 +114,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
 
+
     private OrderDto toDto(Order order) {
         if (order == null) {
             return null;
@@ -127,7 +129,8 @@ public class OrderDomainServiceImpl implements OrderDomainService {
         if (review != null){
             reviewDto = new ReviewDto(review.getText(), review.getRating(), review.getDate(), review.getUser().getFirstName());
         }
-        return new OrderDto(order.getId(), order.getCreationTime(), order.getDeliveryTime(), order.getStatus(),
+        BigDecimal total = order.getTotalAmount() == null ? order.calculateTotalAmount() : order.getTotalAmount();
+        return new OrderDto(order.getId(), order.getCreationTime(), order.getDeliveryTime(), order.getStatus(), total,
                 order.getRestaurant().getId(), order.getRestaurant().getName(), orderItems, reviewDto);
     }
 }

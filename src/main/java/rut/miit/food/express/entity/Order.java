@@ -18,6 +18,7 @@ public class Order extends BaseEntity {
     private User user;
     private Restaurant restaurant;
     private OrderStatus status;
+    private BigDecimal totalAmount;
     private Set<OrderItem> orderItems;
     private Review review;
 
@@ -59,6 +60,11 @@ public class Order extends BaseEntity {
         return status;
     }
 
+    @Column(name = "total_amount")
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
     @OneToMany(mappedBy = "order")
     public Set<OrderItem> getOrderItems() {
         return orderItems;
@@ -96,6 +102,10 @@ public class Order extends BaseEntity {
             throw new InvalidValueException("Status must not be null");
         }
         this.status = status;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     protected void setOrderItems(Set<OrderItem> orderItems) {
@@ -139,17 +149,22 @@ public class Order extends BaseEntity {
             throw new ValidationException("The status is not DRAFT or there are no dishes in the order");
         }
 
-        BigDecimal totalAmount = BigDecimal.valueOf(0);
-        for (OrderItem orderItem : orderItems) {
-            totalAmount = totalAmount.add(orderItem.getDish().getPrice().multiply(BigDecimal.valueOf(orderItem.getCount())));
-        }
-        if (totalAmount.compareTo(restaurant.getMinOrderAmount()) < 0) {
+        BigDecimal total = calculateTotalAmount();
+        if (total.compareTo(restaurant.getMinOrderAmount()) < 0) {
             throw new ValidationException("Order amount is less than the minimum order amount in the restaurant");
         }
-
-        status = OrderStatus.CREATED;
         creationTime = LocalDateTime.now();
+        status = OrderStatus.CREATED;
+        totalAmount = total;
 
+    }
+
+    public BigDecimal calculateTotalAmount() {
+        BigDecimal total = BigDecimal.valueOf(0);
+        for (OrderItem orderItem : orderItems) {
+            total = total.add(orderItem.getDish().getPrice().multiply(BigDecimal.valueOf(orderItem.getCount())));
+        }
+        return total;
     }
 
     public boolean notEmpty() {

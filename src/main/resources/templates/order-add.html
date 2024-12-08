@@ -8,10 +8,15 @@
 
     <div th:each="order : ${model.orders}" class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">
-                <a th:text="${'Ресторан: ' + order.restaurantName}"
-                   th:href="@{/restaurants/{id}(id=${order.restaurantId})}" class="card-text text-decoration-none"></a>
-            </h5>
+
+            <div class="d-flex justify-content-between ">
+                <h5 class="card-title">Ресторан:
+                    <a th:text="${order.restaurantName}"
+                       th:href="@{/restaurants/{id}(id=${order.restaurantId})}" class="card-text text-decoration-none"></a>
+                </h5>
+                <p th:text="${'Итог: ' + order.totalPrice}" class="card-text h5"></p>
+
+            </div>
 
             <h6>Состав заказа:</h6>
             <div class="d-flex flex-wrap gap-1">

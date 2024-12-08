@@ -21,6 +21,7 @@
             <a th:text="${'Ресторан: ' + order.restaurantName}"
                th:href="@{/restaurants/{id}(id=${order.restaurantId})}" class="card-text text-decoration-none"></a>
 
+            <p th:text="${'Сумма заказа: ' + order.totalPrice}" class="card-subtitle"></p>
 
             <h6>Состав заказа:</h6>
             <div class="d-flex flex-wrap gap-1">
