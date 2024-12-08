@@ -99,7 +99,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     @Override
     public List<OrderDto> restaurantOrders(Integer userId) {
         List<Order> orders = orderRepository.findByRestaurantIdStatus(userId, Set.of(OrderStatus.CREATED,
-                OrderStatus.CONFIRMED, OrderStatus.COOKING_PROCESS, OrderStatus.READY_FOR_DELIVERY)
+                OrderStatus.CONFIRMED, OrderStatus.COOKING_PROCESS, OrderStatus.READY_FOR_DELIVERY, OrderStatus.OUT_FOR_DELIVERY)
         );
         return orders.stream().sorted(Comparator.comparing(Order::getCreationTime)).map(this::toDto).toList();
     }

@@ -91,7 +91,7 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
         List<ReviewViewModel> reviewViewModels = reviewService.reviewsForRestaurant(id)
                 .stream().map(dto -> new ReviewViewModel(dto.rating(), dto.text(), dto.date(), dto.userFirstName())).toList();
         RestaurantReviewViewModel viewModel = new RestaurantReviewViewModel(
-                createBaseViewModel(restaurantDto.name()),
+                createBaseViewModel("Отзывы ресторана"),
                 toViewModel(restaurantDto), reviewViewModels);
 
         model.addAttribute("model", viewModel);

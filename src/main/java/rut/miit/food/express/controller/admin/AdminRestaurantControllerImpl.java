@@ -94,7 +94,7 @@ public class AdminRestaurantControllerImpl extends BaseControllerImpl implements
     public String editRestaurant(@PathVariable Integer id, Model model) {
         RestaurantDto dto = restaurantService.getRestaurantDetails(id);
         EditViewModel viewModel = new EditViewModel(
-                createBaseViewModel("Редактирование информации")
+                createBaseViewModel("Изменение информации")
         );
         model.addAttribute("model", viewModel);
         model.addAttribute("form", new RestaurantEditForm(dto.id(), dto.name(), dto.address(), dto.description(), dto.phoneNumber(), dto.openTime(), dto.closeTime(), dto.minOrderAmount()));
@@ -126,7 +126,7 @@ public class AdminRestaurantControllerImpl extends BaseControllerImpl implements
             orderViewModels.add(orderViewModel);
         }
         OrderRestaurantListViewModel viewModel = new OrderRestaurantListViewModel(
-                createBaseViewModel("История заказов"), orderViewModels
+                createBaseViewModel("Заказы"), orderViewModels
         );
         model.addAttribute("model", viewModel);
         return "restaurant-orders";
