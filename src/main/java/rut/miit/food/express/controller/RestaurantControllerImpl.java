@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import rut.miit.food.express.dto.PageWrapper;
+import rut.miit.food.express.util.PageWrapper;
 import rut.miit.food.express.dto.dish.DishByCategoryDto;
 import rut.miit.food.express.dto.restaurant.RestaurantDto;
 import rut.miit.food.express.service.*;

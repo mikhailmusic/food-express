@@ -1,4 +1,4 @@
-package rut.miit.food.express.dto;
+package rut.miit.food.express.util;
 
 import java.util.List;
 

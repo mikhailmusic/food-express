@@ -1,6 +1,6 @@
 package rut.miit.food.express.service;
 
-import rut.miit.food.express.dto.PageWrapper;
+import rut.miit.food.express.util.PageWrapper;
 import rut.miit.food.express.dto.restaurant.RestaurantAddDto;
 import rut.miit.food.express.dto.restaurant.RestaurantDto;
 import rut.miit.food.express.dto.restaurant.RestaurantRatingDto;

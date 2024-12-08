@@ -3,7 +3,7 @@ package rut.miit.food.express.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import rut.miit.food.express.dto.PageWrapper;
+import rut.miit.food.express.util.PageWrapper;
 import rut.miit.food.express.dto.restaurant.RestaurantAddDto;
 import rut.miit.food.express.dto.restaurant.RestaurantDto;
 import rut.miit.food.express.dto.restaurant.RestaurantRatingDto;
@@ -13,6 +13,7 @@ import rut.miit.food.express.entity.enums.OrderStatus;
 import rut.miit.food.express.exception.RestaurantNotFoundException;
 import rut.miit.food.express.repository.RestaurantRepository;
 import rut.miit.food.express.service.RestaurantService;
+import rut.miit.food.express.util.PaginationHelper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -62,16 +63,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         List<RestaurantDto> restaurantDtos = restaurantRepository.findByNameContaining(searchQuery).stream()
                 .filter(restaurant -> restaurant.checkIsOpenNow()).map(this::toDto).toList();
 
-        int start = (page - 1) * size;
-        int end = Math.min(start + size, restaurantDtos.size());
-        int totalPages = (int) Math.ceil((double) restaurantDtos.size() / size);
-
-        if (start >= restaurantDtos.size()) {
-            return new PageWrapper<>(List.of(),totalPages);
-        }
-
-        List<RestaurantDto> pageContent = restaurantDtos.subList(start, end);
-        return new PageWrapper<>(pageContent, totalPages);
+        return PaginationHelper.getPage(restaurantDtos, page, size);
     }
 
     @Override

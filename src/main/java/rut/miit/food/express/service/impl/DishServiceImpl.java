@@ -3,7 +3,7 @@ package rut.miit.food.express.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import rut.miit.food.express.dto.PageWrapper;
+import rut.miit.food.express.util.PageWrapper;
 import rut.miit.food.express.dto.dish.DishAddDto;
 import rut.miit.food.express.dto.dish.DishByCategoryDto;
 import rut.miit.food.express.dto.dish.DishDto;
@@ -21,6 +21,7 @@ import rut.miit.food.express.repository.DishRepository;
 import rut.miit.food.express.repository.OrderRepository;
 import rut.miit.food.express.repository.RestaurantRepository;
 import rut.miit.food.express.service.DishService;
+import rut.miit.food.express.util.PaginationHelper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -81,15 +82,7 @@ public class DishServiceImpl implements DishService {
     public PageWrapper<DishDto> getDishes(String name, Integer categoryId, int page, int size) {
         List<DishDto> dishDtos = dishRepository.findByNameContaining(name, categoryId)
                 .stream().map(this::toDto).toList();
-        int start = (page - 1) * size;
-        int end = Math.min(start + size, dishDtos.size());
-        int totalPages = (int) Math.ceil((double) dishDtos.size() / size);
-
-        if (start > dishDtos.size()) {
-            return new PageWrapper<>(List.of(), totalPages);
-        }
-        List<DishDto> pageContent = dishDtos.subList(start, end);
-        return new PageWrapper<>(pageContent, totalPages);
+        return PaginationHelper.getPage(dishDtos, page, size);
 
     }
 
