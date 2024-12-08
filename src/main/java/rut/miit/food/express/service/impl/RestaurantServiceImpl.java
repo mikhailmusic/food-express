@@ -2,11 +2,8 @@ package rut.miit.food.express.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import rut.miit.food.express.dto.PageWrapper;
 import rut.miit.food.express.dto.restaurant.RestaurantAddDto;
 import rut.miit.food.express.dto.restaurant.RestaurantDto;
 import rut.miit.food.express.dto.restaurant.RestaurantRatingDto;
@@ -60,20 +57,21 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Page<RestaurantDto> availableRestaurants(String searchQuery, int page, int size) {
+    @Cacheable("restaurants")
+    public PageWrapper<RestaurantDto> availableRestaurants(String searchQuery, int page, int size) {
         List<RestaurantDto> restaurantDtos = restaurantRepository.findByNameContaining(searchQuery).stream()
                 .filter(restaurant -> restaurant.checkIsOpenNow()).map(this::toDto).toList();
 
-        Pageable pageable = PageRequest.of(page - 1, size);
         int start = (page - 1) * size;
         int end = Math.min(start + size, restaurantDtos.size());
+        int totalPages = (int) Math.ceil((double) restaurantDtos.size() / size);
 
         if (start >= restaurantDtos.size()) {
-            return new PageImpl<>(List.of(), pageable, restaurantDtos.size());
+            return new PageWrapper<>(List.of(),totalPages);
         }
 
         List<RestaurantDto> pageContent = restaurantDtos.subList(start, end);
-        return new PageImpl<>(pageContent, pageable, restaurantDtos.size());
+        return new PageWrapper<>(pageContent, totalPages);
     }
 
     @Override

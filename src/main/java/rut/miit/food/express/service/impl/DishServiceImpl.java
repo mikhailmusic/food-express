@@ -2,11 +2,8 @@ package rut.miit.food.express.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import rut.miit.food.express.dto.PageWrapper;
 import rut.miit.food.express.dto.dish.DishAddDto;
 import rut.miit.food.express.dto.dish.DishByCategoryDto;
 import rut.miit.food.express.dto.dish.DishDto;
@@ -80,18 +77,19 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public Page<DishDto> getDishes(String name, Integer categoryId, int page, int size) {
+    @Cacheable("dishes")
+    public PageWrapper<DishDto> getDishes(String name, Integer categoryId, int page, int size) {
         List<DishDto> dishDtos = dishRepository.findByNameContaining(name, categoryId)
                 .stream().map(this::toDto).toList();
-        Pageable pageable = PageRequest.of(page - 1, size);
         int start = (page - 1) * size;
         int end = Math.min(start + size, dishDtos.size());
+        int totalPages = (int) Math.ceil((double) dishDtos.size() / size);
 
         if (start > dishDtos.size()) {
-            return new PageImpl<>(List.of(), pageable, dishDtos.size());
+            return new PageWrapper<>(List.of(), totalPages);
         }
         List<DishDto> pageContent = dishDtos.subList(start, end);
-        return new PageImpl<>(pageContent, pageable, dishDtos.size());
+        return new PageWrapper<>(pageContent, totalPages);
 
     }
 

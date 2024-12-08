@@ -78,7 +78,7 @@ public class User extends BaseEntity{
     }
 
     protected void setPhoneNumber(String phoneNumber) {
-        if (phoneNumber != null && !phoneNumber.isBlank() && !phoneNumber.matches("\\+?[0-9-]+")) {
+        if (phoneNumber != null && !phoneNumber.isBlank() && !phoneNumber.matches("\\+?[0-9]+")) {
             throw new InvalidValueException("Phone number must only contain digits and optional '+'");
         }
         this.phoneNumber = (phoneNumber != null && phoneNumber.isBlank()) ? null : phoneNumber;

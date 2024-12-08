@@ -21,11 +21,11 @@
 
         <div class="row row-cols-md-4 g-1">
             <div class="col"  th:each="category : ${model.categories}">
-                <div class="card text-decoration-none">
+                <a class="card text-decoration-none" th:href="@{/dishes(categoryId=${category.id})}">
                     <div class="card-body">
                         <h5 th:text="${category.name}" class="card-title"></h5>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>

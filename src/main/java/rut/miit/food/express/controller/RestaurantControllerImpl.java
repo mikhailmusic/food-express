@@ -12,10 +12,10 @@ import food.express.contracts.viewmodel.restaurant.RestaurantReviewViewModel;
 import food.express.contracts.viewmodel.restaurant.RestaurantViewModel;
 import food.express.contracts.viewmodel.review.ReviewViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import rut.miit.food.express.dto.PageWrapper;
 import rut.miit.food.express.dto.dish.DishByCategoryDto;
 import rut.miit.food.express.dto.restaurant.RestaurantDto;
 import rut.miit.food.express.service.*;
@@ -53,11 +53,11 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
         int size = form.size() != null ? form.size() : 12;
         form = new RestaurantSearchForm(searchTerm, page, size);
 
-        Page<RestaurantDto> restaurantDtos = restaurantService.availableRestaurants(searchTerm, page, size);
-        List<RestaurantViewModel> restaurantViewModels = restaurantDtos.stream().map(this::toViewModel).toList();
+        PageWrapper<RestaurantDto> wrapper = restaurantService.availableRestaurants(searchTerm, page, size);
+        List<RestaurantViewModel> restaurantViewModels = wrapper.content().stream().map(this::toViewModel).toList();
         RestaurantListViewModel viewModel = new RestaurantListViewModel(
                 createBaseViewModel("Рестораны"),
-                restaurantViewModels, restaurantDtos.getTotalPages()
+                restaurantViewModels, wrapper.totalPages()
         );
         model.addAttribute("model", viewModel);
         model.addAttribute("form", form);

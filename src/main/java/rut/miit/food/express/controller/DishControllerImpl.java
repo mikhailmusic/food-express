@@ -7,10 +7,10 @@ import food.express.contracts.viewmodel.dish.DishInfoViewModel;
 import food.express.contracts.viewmodel.dish.DishListViewModel;
 import food.express.contracts.viewmodel.dish.DishViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import rut.miit.food.express.dto.PageWrapper;
 import rut.miit.food.express.dto.dish.DishDto;
 import rut.miit.food.express.service.DishCategoryService;
 import rut.miit.food.express.service.DishService;
@@ -56,15 +56,15 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
         int size = form.size() != null ? form.size() : 12;
         form = new DishSearchForm(searchTerm, form.categoryId(), page, size);
 
-        Page<DishDto> dishDtos = dishService.getDishes(searchTerm, form.categoryId(), page, size);
-        List<DishViewModel> dishViewModels = dishDtos.stream()
+        PageWrapper<DishDto> wrapper = dishService.getDishes(searchTerm, form.categoryId(), page, size);
+        List<DishViewModel> dishViewModels = wrapper.content().stream()
                 .map(dto -> new DishViewModel(dto.id(), dto.name(), dto.price(), dto.weight(), dto.calories(), dto.imageURL())).toList();
         List<CategoryViewModel> categories = categoryService.getAllCategories()
                 .stream().map(dto -> new CategoryViewModel(dto.id(), dto.name())).toList();
 
         DishListViewModel viewModel = new DishListViewModel(
                 createBaseViewModel("Блюда"),
-                dishViewModels, categories, dishDtos.getTotalPages()
+                dishViewModels, categories, wrapper.totalPages()
         );
         model.addAttribute("model", viewModel);
         model.addAttribute("form", form);

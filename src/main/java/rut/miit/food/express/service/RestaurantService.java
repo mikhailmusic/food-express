@@ -1,6 +1,6 @@
 package rut.miit.food.express.service;
 
-import org.springframework.data.domain.Page;
+import rut.miit.food.express.dto.PageWrapper;
 import rut.miit.food.express.dto.restaurant.RestaurantAddDto;
 import rut.miit.food.express.dto.restaurant.RestaurantDto;
 import rut.miit.food.express.dto.restaurant.RestaurantRatingDto;
@@ -12,7 +12,7 @@ public interface RestaurantService {
     void changeRestaurantInfo(RestaurantDto restaurantDto);
     RestaurantDto getRestaurantDetails(Integer id);
     List<RestaurantDto> availableRestaurants();
-    Page<RestaurantDto> availableRestaurants(String searchQuery, int page, int size);
+    PageWrapper<RestaurantDto> availableRestaurants(String searchQuery, int page, int size);
     List<RestaurantRatingDto> ratingRestaurants();
 
 //    void closeRestaurant(Integer id);
