@@ -23,17 +23,16 @@
                 <p>Вес: <b th:text="*{weight}"></b></p>
                 <p>Калории: <b th:text="*{calories}"></b></p>
                 <p th:text="${model.description}"></p>
-
-
-
             </div>
+
             <div class="border-top text-p">
                 <p>Категория: <b th:text="${model.categoryName}"></b></p>
                 <a th:href="@{/restaurants/{id}(id=${model.restaurantId})}" class="text-decoration-none">
                     Ресторан: <b th:text="${model.restaurantName}"></b>
                 </a>
             </div>
-            <div class=" text-center my-3">
+            <p sec:authorize="hasRole('ADMIN')">Видимость блюда: <b th:text="${model.dishViewModel.isVisible ? 'Видимо' : 'Невидимо'}"></b></p>
+            <div th:if="*{isVisible}" class=" text-center my-3">
                 <a class="btn btn-secondary w-50" th:href="@{/dishes/{id}(id=${id})}">Добавить в заказ</a>
             </div>
 

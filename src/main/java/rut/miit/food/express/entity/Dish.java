@@ -15,6 +15,7 @@ public class Dish extends BaseEntity {
     private Integer weight;
     private Integer calories;
     private String imageURL;
+    private Boolean isVisible;
     private Restaurant restaurant;
     private DishCategory category;
     private Set<OrderItem> orderItems;
@@ -28,6 +29,7 @@ public class Dish extends BaseEntity {
         setImageURL(imageURL);
         setRestaurant(restaurant);
         setCategory(category);
+        setVisible(true);
     }
 
     protected Dish() {
@@ -61,6 +63,11 @@ public class Dish extends BaseEntity {
     @Column(name = "image_url", nullable = false)
     public String getImageURL() {
         return imageURL;
+    }
+
+    @Column(name = "is_visible", nullable = false)
+    public Boolean getVisible() {
+        return isVisible;
     }
 
     @ManyToOne(optional = false)
@@ -114,6 +121,13 @@ public class Dish extends BaseEntity {
             throw new InvalidValueException("Image URL must not be null, empty, or contain only whitespace");
         }
         this.imageURL = imageURL;
+    }
+
+    public void setVisible(Boolean visible) {
+        if (visible == null) {
+            throw new IllegalArgumentException("Visibility cannot be null");
+        }
+        isVisible = visible;
     }
 
     protected void setRestaurant(Restaurant restaurant) {

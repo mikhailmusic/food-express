@@ -10,6 +10,7 @@ public record DishDto(
         Integer weight,
         Integer calories,
         String imageURL,
+        Boolean isVisible,
         Integer categoryId,
         Integer restaurantId,
         String categoryName,

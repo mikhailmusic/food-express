@@ -5,5 +5,6 @@ public record OrderItemDto(
         Integer dishId,
         Integer count,
         String dishName,
-        String imageURL
+        String imageURL,
+        Boolean isVisible
 ) {}

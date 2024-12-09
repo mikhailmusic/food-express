@@ -25,15 +25,16 @@
 
             <h6>Состав заказа:</h6>
             <div class="d-flex flex-wrap gap-1">
-                <a th:href="@{/dishes/{id}(id=${item.dishId})}" th:each="item : ${order.orderItems}"
+                <div th:href="@{/dishes/{id}(id=${item.dishId})}" th:each="item : ${order.orderItems}"
                    th:if="${item.count != 0}"
                    class="card text-decoration-none">
+                    <div th:if="${!item.isVisible}" class="overlay position-absolute top-0 start-0 w-100 h-100 bg-white opacity-50"></div>
                     <img th:src="${item.imageURL}" class="min-img" alt="Блюдо">
                     <div class="card-body p-2">
-                        <h6 class="card-title mb-1" th:text="${item.dishName}"></h6>
+                        <a th:href="@{/dishes/{id}(id=${item.dishId})}" class="card-title mb-1 text-decoration-none" th:text="${item.dishName}"></a>
                         <p class="card-text small text-muted">Количество: <span th:text="${item.count}"></span></p>
                     </div>
-                </a>
+                </div>
             </div>
 
             <div th:if="${order.review != null}" class="mt-3 text-p">

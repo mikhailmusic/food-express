@@ -22,9 +22,12 @@
             <div class="d-flex flex-wrap gap-1">
                 <div th:each="item : ${order.orderItems}" th:if="${item.count != 0}"
                      class="card card-sm  text-center">
+                    <div th:if="${!item.isVisible}" class="overlay position-absolute top-0 start-0 w-100 h-100 bg-white opacity-50 pe-none"></div>
 
                     <img th:src="${item.imageURL}" class="ave-img" alt="Блюдо">
-                    <a th:href="@{/dishes/{id}(id=${item.dishId})}" class="mb-1 text-decoration-none text-body" th:text="${item.dishName}"></a>
+                    <a th:href="@{/dishes/{id}(id=${item.dishId})}" class="mb-1 text-decoration-none text-body"
+                       th:classappend="${item.isVisible ? '' : 'pe-none'}"
+                       th:text="${item.dishName}"></a>
 
                     <div class="p-2">
                         <form th:action="@{/orders/add/change-item}" th:method="post"
@@ -41,8 +44,9 @@
                             <button type="submit" name="count" th:value="${item.count + 1}"
                                     class="btn btn-outline-success">+
                             </button>
-
                         </form>
+                        <small th:if="${!item.isVisible}" class="text-danger">Блюдо не доступно</small>
+
                     </div>
                 </div>
             </div>

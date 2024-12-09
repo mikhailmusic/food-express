@@ -1,6 +1,8 @@
 package rut.miit.food.express.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import rut.miit.food.express.dto.review.ReviewAddDto;
 import rut.miit.food.express.dto.review.ReviewDto;
@@ -26,6 +28,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @CacheEvict(value = "reviews", allEntries = true)
     public void leaveReview(ReviewAddDto reviewDto) {
         Order order = orderRepository.findById(reviewDto.orderId()).orElseThrow(() -> new OrderNotFoundException(reviewDto.orderId()));
         Review review = new Review(reviewDto.text(), reviewDto.rating(), order, order.getUser());
@@ -33,6 +36,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Cacheable("reviews")
     public List<ReviewDto> reviewsForRestaurant(Integer restaurantId) {
         List<Review> reviews = reviewRepository.findByRestaurantId(restaurantId);
         return reviews.stream().sorted(Comparator.comparing(Review::getDate).reversed()).map(this::toDto).toList();

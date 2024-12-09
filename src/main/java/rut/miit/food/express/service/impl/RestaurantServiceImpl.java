@@ -1,7 +1,10 @@
 package rut.miit.food.express.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import rut.miit.food.express.util.PageWrapper;
 import rut.miit.food.express.dto.restaurant.RestaurantAddDto;
@@ -19,6 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@EnableCaching
 public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantRepository restaurantRepository;
 
@@ -28,6 +32,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @CacheEvict(value = {"restaurants"}, allEntries = true)
     public Integer registerRestaurant(RestaurantAddDto dto) {
         Set<String> existingNames = restaurantRepository.findAllNames();
 
@@ -36,6 +41,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "restaurant", key = "#dto.id"),
+            @CacheEvict(value = {"restaurants", "top-restaurants"}, allEntries = true)
+    })
     public void changeRestaurantInfo(RestaurantDto dto) {
         Set<String> existingNames = restaurantRepository.findAllNames();
         Restaurant restaurant = restaurantRepository.findById(dto.id()).orElseThrow(() -> new RestaurantNotFoundException(dto.id()));
@@ -52,6 +61,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @Cacheable(value = "restaurant", key = "#id")
     public RestaurantDto getRestaurantDetails(Integer id) {
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() -> new RestaurantNotFoundException(id));
         return toDto(restaurant);
@@ -64,12 +74,6 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .filter(restaurant -> restaurant.checkIsOpenNow()).map(this::toDto).toList();
 
         return PaginationHelper.getPage(restaurantDtos, page, size);
-    }
-
-    @Override
-    public List<RestaurantDto> availableRestaurants() {
-        List<Restaurant> restaurants = restaurantRepository.findAll();
-        return restaurants.stream().filter(restaurant -> restaurant.checkIsOpenNow()).map(this::toDto).toList();
     }
 
     @Override

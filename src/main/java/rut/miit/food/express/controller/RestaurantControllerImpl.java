@@ -3,6 +3,7 @@ package rut.miit.food.express.controller;
 import food.express.contracts.controller.RestaurantController;
 
 
+import food.express.contracts.form.DishFilterForm;
 import food.express.contracts.form.RestaurantSearchForm;
 import food.express.contracts.viewmodel.dish.DishByCategoryViewModel;
 import food.express.contracts.viewmodel.dish.DishViewModel;
@@ -67,13 +68,16 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
 
     @Override
     @GetMapping("/{id}")
-    public String restaurantDetails(@PathVariable Integer id, Model model) {
+    public String restaurantDetails(@PathVariable Integer id, @ModelAttribute("form") DishFilterForm form, Model model) {
+        boolean enableDish = form.enableDish() != null ? form.enableDish() : true;
+        form = new DishFilterForm(enableDish);
+
         RestaurantDto restaurantDto = restaurantService.getRestaurantDetails(id);
         List<DishByCategoryViewModel> dishViewModels = new ArrayList<>();
-        for (DishByCategoryDto dto : dishService.dishesByRestaurant(id)) {
+        for (DishByCategoryDto dto : dishService.dishesByRestaurant(id, enableDish)) {
             dishViewModels.add(new DishByCategoryViewModel(dto.id(), dto.name(),
                     dto.dishes().stream().map(dishDto -> new DishViewModel(dishDto.id(), dishDto.name(), dishDto.price(),
-                    dishDto.weight(), dishDto.calories(), dishDto.imageURL())).toList(),
+                    dishDto.weight(), dishDto.calories(), dishDto.imageURL(), dishDto.isVisible())).toList(),
                     dto.count()));
         }
         RestaurantInfoViewModel viewModel = new RestaurantInfoViewModel(
@@ -81,6 +85,7 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
                 toViewModel(restaurantDto), dishViewModels
         );
         model.addAttribute("model", viewModel);
+        model.addAttribute("form", form);
         return "restaurant-details";
     }
 

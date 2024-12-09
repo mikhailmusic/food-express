@@ -48,7 +48,7 @@ public class AdminDishControllerImpl extends BaseControllerImpl implements Admin
             return "restaurant-edit";
         }
         DishUpdateDto dto = new DishUpdateDto(form.id(), form.name(), form.description(), form.price(), form.weight(),
-                form.calories(), form.imageURL(), form.categoryId());
+                form.calories(), form.imageURL(), form.isVisible(), form.categoryId());
         dishService.modifyDish(dto);
         return "redirect:/dishes/" + id;
 
@@ -65,7 +65,7 @@ public class AdminDishControllerImpl extends BaseControllerImpl implements Admin
         );
         model.addAttribute("model", viewModel);
         model.addAttribute("form", new DishEditForm(dishDto.id(), dishDto.name(), dishDto.description(),
-                dishDto.price(), dishDto.weight(), dishDto.calories(), dishDto.imageURL(), dishDto.categoryId()));
+                dishDto.price(), dishDto.weight(), dishDto.calories(), dishDto.imageURL(), dishDto.isVisible(), dishDto.categoryId()));
         return "dish-edit";
     }
 

@@ -51,7 +51,7 @@ public class HomeControllerImpl extends BaseControllerImpl implements HomeContro
         List<DishByCategoryViewModel> dishViewModels = new ArrayList<>();
         for (DishByCategoryDto dto : dishService.popularDish()) {
             dishViewModels.add(new DishByCategoryViewModel(dto.id(), dto.name(),
-                    dto.dishes().stream().map(dishDto -> new DishViewModel(dishDto.id(), dishDto.name(), dishDto.price(), dishDto.weight(), dishDto.calories(), dishDto.imageURL())).toList(),
+                    dto.dishes().stream().map(dishDto -> new DishViewModel(dishDto.id(), dishDto.name(), dishDto.price(), dishDto.weight(), dishDto.calories(), dishDto.imageURL(), dishDto.isVisible())).toList(),
                     dto.count()));
         }
         DishTopViewModel viewModel = new DishTopViewModel(

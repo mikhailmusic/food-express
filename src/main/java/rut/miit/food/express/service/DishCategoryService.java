@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface DishCategoryService {
     void addCategory(String name);
-    List<CategoryDto> getCategoriesByRestaurant(Integer id);
     List<CategoryDto> getAllCategories();
 
 }

@@ -39,7 +39,7 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
         DishDto dto = dishService.getDishDetails(id);
         DishInfoViewModel viewModel = new DishInfoViewModel(
                 createBaseViewModel(dto.name()),
-                new DishViewModel(dto.id(), dto.name(), dto.price(), dto.weight(), dto.calories(), dto.imageURL()),
+                new DishViewModel(dto.id(), dto.name(), dto.price(), dto.weight(), dto.calories(), dto.imageURL(), dto.isVisible()),
                 dto.description(), dto.categoryName(), dto.restaurantName(), dto.restaurantId()
         );
 
@@ -54,11 +54,12 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
         String searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
         int page = form.page() != null ? form.page() : 1;
         int size = form.size() != null ? form.size() : 12;
-        form = new DishSearchForm(searchTerm, form.categoryId(), page, size);
+        boolean enableDish = form.enableDish() != null ? form.enableDish() : true;
+        form = new DishSearchForm(searchTerm, form.categoryId(), enableDish, page, size);
 
-        PageWrapper<DishDto> wrapper = dishService.getDishes(searchTerm, form.categoryId(), page, size);
+        PageWrapper<DishDto> wrapper = dishService.getDishes(searchTerm, form.categoryId(), enableDish, page, size);
         List<DishViewModel> dishViewModels = wrapper.content().stream()
-                .map(dto -> new DishViewModel(dto.id(), dto.name(), dto.price(), dto.weight(), dto.calories(), dto.imageURL())).toList();
+                .map(dto -> new DishViewModel(dto.id(), dto.name(), dto.price(), dto.weight(), dto.calories(), dto.imageURL(), dto.isVisible())).toList();
         List<CategoryViewModel> categories = categoryService.getAllCategories()
                 .stream().map(dto -> new CategoryViewModel(dto.id(), dto.name())).toList();
 

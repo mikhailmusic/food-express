@@ -67,12 +67,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(this::toDto).toList();
-    }
-
-    @Override
     public PageWrapper<UserDto> getAllUsers(String searchQuery, int page, int size) {
         List<UserDto> dtoList = userRepository.findByUsernameContaining(searchQuery).stream().map(this::toDto).toList();
         return PaginationHelper.getPage(dtoList, page, size);

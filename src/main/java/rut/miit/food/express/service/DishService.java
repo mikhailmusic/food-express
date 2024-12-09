@@ -13,9 +13,8 @@ public interface DishService {
     void addDish(DishAddDto dishDto);
     void modifyDish(DishUpdateDto dishDto);
     DishDto getDishDetails(Integer id);
-    PageWrapper<DishDto> getDishes(String name, Integer categoryId, int page, int size);
-    List<DishByCategoryDto> dishesByRestaurant(Integer restaurantId);
+    PageWrapper<DishDto> getDishes(String name, Integer categoryId, boolean isEnable, int page, int size);
+    List<DishByCategoryDto> dishesByRestaurant(Integer restaurantId, boolean isEnable);
     List<DishByCategoryDto> popularDish();
 
-//    void updateDishAvailability(Integer id);
 }

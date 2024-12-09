@@ -31,7 +31,18 @@
 
 
         <div class="row">
-            <nav class="col-md-2 sticky-menu py-2">
+            <nav class="col-md-2 sticky-menu">
+
+                <form sec:authorize="hasRole('ADMIN')" th:action="@{/restaurants/{id}(id=${model.restaurant.id})}" method="get">
+                    <div class="form-check form-switch m-2">
+                        <input type="hidden" name="enableDish" th:value="${!form.enableDish}" />
+                        <input class="form-check-input" type="checkbox" id="toggle"
+                               th:checked="${!form.enableDish}" onchange="this.form.submit()">
+                        <label class="form-check-label" for="toggle">Показать скрытое</label>
+                    </div>
+                </form>
+
+
                 <div class="list-group">
                     <div th:each="category : ${model.category}">
                         <a th:href="'#' + ${category.name}" class="list-group-item d-flex justify-content-between">

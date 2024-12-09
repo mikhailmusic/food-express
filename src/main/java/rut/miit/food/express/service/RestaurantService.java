@@ -11,7 +11,6 @@ public interface RestaurantService {
     Integer registerRestaurant(RestaurantAddDto restaurantDto);
     void changeRestaurantInfo(RestaurantDto restaurantDto);
     RestaurantDto getRestaurantDetails(Integer id);
-    List<RestaurantDto> availableRestaurants();
     PageWrapper<RestaurantDto> availableRestaurants(String searchQuery, int page, int size);
     List<RestaurantRatingDto> ratingRestaurants();
 

@@ -5,7 +5,7 @@
 <header th:replace="~{fragments/header}"></header>
 <main>
     <div class="container p-3 col-md-4">
-        <h2 class="mb-4 fw-light text-center">Изменение информации</h2>
+        <h2 class="mb-2 fw-light text-center">Изменение информации</h2>
         <form th:action="@{/admin/dishes/{id}/edit(id=${form.id})}" th:object="${form}" th:method="post">
             <input th:field="*{id}" type="hidden" id="id" class="form-control text-center"/>
             <div class="mb-2">
@@ -62,6 +62,18 @@
                 <small th:if="${#fields.hasErrors('categoryId')}"
                        th:errors="*{categoryId}"
                        class="text-danger">Error message</small>
+            </div>
+
+            <div class="mb-2">
+                <label for="isVisible" class="form-label">Видимость блюда:</label>
+                <select th:field="*{isVisible}" id="isVisible" class="form-select">
+                    <option value="true">Видимо</option>
+                    <option value="false">Невидимо</option>
+                </select>
+                <small th:if="${#fields.hasErrors('isVisible')}"
+                       th:errors="*{isVisible}"
+                       class="text-danger">Error message</small>
+
             </div>
 
             <div class="text-center my-4">

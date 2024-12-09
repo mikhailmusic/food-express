@@ -14,7 +14,6 @@ public interface UserService {
     void updateUserPassword(UserChangePasswordDto userDto);
     UserDto getUser(Integer id);
     UserDto getUserByUsername(String username);
-    List<UserDto> getAllUsers();
     PageWrapper<UserDto> getAllUsers(String searchQuery, int page, int size);
 
 

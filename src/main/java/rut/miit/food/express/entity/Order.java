@@ -104,7 +104,7 @@ public class Order extends BaseEntity {
         this.status = status;
     }
 
-    public void setTotalAmount(BigDecimal totalAmount) {
+    protected void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
@@ -147,6 +147,12 @@ public class Order extends BaseEntity {
 
         if (status != OrderStatus.DRAFT || orderItems == null || orderItems.isEmpty()) {
             throw new ValidationException("The status is not DRAFT or there are no dishes in the order");
+        }
+
+        for (OrderItem orderItem : orderItems) {
+            if (!orderItem.getDish().getVisible()) {
+                throw new ValidationException("One or more dishes are unavailable");
+            }
         }
 
         BigDecimal total = calculateTotalAmount();

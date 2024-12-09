@@ -120,7 +120,7 @@ public class AdminRestaurantControllerImpl extends BaseControllerImpl implements
         for (OrderDto dto : orderService.restaurantOrders(id)) {
             List<OrderItemViewModel> itemViewModels = dto.orderItems()
                     .stream().map(itemDto -> new OrderItemViewModel(itemDto.id(), itemDto.dishId(), itemDto.count(),
-                            itemDto.dishName(), itemDto.imageURL())).toList();
+                            itemDto.dishName(), itemDto.imageURL(), itemDto.isVisible())).toList();
             OrderRestaurantViewModel orderViewModel = new OrderRestaurantViewModel(dto.id(), dto.creationTime(),
                     dto.status().name(), itemViewModels);
             orderViewModels.add(orderViewModel);

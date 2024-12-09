@@ -1,7 +1,10 @@
 package rut.miit.food.express.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import rut.miit.food.express.util.PageWrapper;
 import rut.miit.food.express.dto.dish.DishAddDto;
@@ -27,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@EnableCaching
 public class DishServiceImpl implements DishService {
     private final DishRepository dishRepository;
     private final RestaurantRepository restaurantRepository;
@@ -42,6 +46,7 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"dishes", "dishes-restaurant"}, allEntries = true)
     public void addDish(DishAddDto dto) {
         DishCategory category = categoryRepository.findById(dto.categoryId())
                 .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId()));
@@ -54,6 +59,10 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "dish", key = "#dto.id"),
+            @CacheEvict(cacheNames = {"dishes", "popular-dishes", "dishes-restaurant"}, allEntries = true)
+    })
     public void modifyDish(DishUpdateDto dto) {
         Dish dish = dishRepository.findById(dto.id()).orElseThrow(() -> new DishNotFoundException(dto.id()));
         dish.setName(dto.name());
@@ -62,6 +71,7 @@ public class DishServiceImpl implements DishService {
         dish.setWeight(dto.weight());
         dish.setCalories(dto.calories());
         dish.setImageURL(dto.imageURL());
+        dish.setVisible(dto.isVisible());
         if (dto.categoryId() != null) {
             DishCategory category = categoryRepository.findById(dto.categoryId())
                     .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId()));
@@ -72,6 +82,7 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    @Cacheable(value = "dish", key = "#id")
     public DishDto getDishDetails(Integer id) {
         Dish dish = dishRepository.findById(id).orElseThrow(() -> new DishNotFoundException(id));
         return toDto(dish);
@@ -79,16 +90,17 @@ public class DishServiceImpl implements DishService {
 
     @Override
     @Cacheable("dishes")
-    public PageWrapper<DishDto> getDishes(String name, Integer categoryId, int page, int size) {
-        List<DishDto> dishDtos = dishRepository.findByNameContaining(name, categoryId)
+    public PageWrapper<DishDto> getDishes(String name, Integer categoryId, boolean isEnable, int page, int size) {
+        List<DishDto> dishDtos = dishRepository.findByNameContaining(name, categoryId, isEnable)
                 .stream().map(this::toDto).toList();
         return PaginationHelper.getPage(dishDtos, page, size);
 
     }
 
     @Override
-    public List<DishByCategoryDto> dishesByRestaurant(Integer restaurantId) {
-        List<Dish> dishes = dishRepository.findByRestaurantId(restaurantId);  // EAGER default ManyToOne
+    @Cacheable("dishes-restaurant")
+    public List<DishByCategoryDto> dishesByRestaurant(Integer restaurantId, boolean isEnable) {
+        List<Dish> dishes = dishRepository.findByRestaurantIdAndIsVisible(restaurantId, isEnable);
         Map<DishCategory, List<Dish>> dishesByCategory = dishes.stream()
                 .collect(Collectors.groupingBy(Dish::getCategory));
         return toDtoByCategory(dishesByCategory);
@@ -104,6 +116,7 @@ public class DishServiceImpl implements DishService {
                         OrderItem::getDish, Collectors.summingLong(OrderItem::getCount)
                 ));
         Map<DishCategory, List<Dish>> dishesByCategory = dishOrderCount.keySet().stream()
+                .filter(Dish::getVisible)
                 .collect(Collectors.groupingBy(Dish::getCategory, Collectors.toList()));
 
         for (Map.Entry<DishCategory, List<Dish>> entry : dishesByCategory.entrySet()) {
@@ -122,11 +135,12 @@ public class DishServiceImpl implements DishService {
             return null;
         }
         return new DishDto(dish.getId(), dish.getName(), dish.getDescription(),
-                dish.getPrice(), dish.getWeight(), dish.getCalories(), dish.getImageURL(),
+                dish.getPrice(), dish.getWeight(), dish.getCalories(), dish.getImageURL(), dish.getVisible(),
                 dish.getCategory().getId(), dish.getRestaurant().getId(),
                 dish.getCategory().getName(), dish.getRestaurant().getName()
         );
     }
+
     private List<DishByCategoryDto> toDtoByCategory(Map<DishCategory, List<Dish>> dishesByCategory) {
         List<DishByCategoryDto> dishesDtos = dishesByCategory.entrySet().stream()
                 .map(entry -> {

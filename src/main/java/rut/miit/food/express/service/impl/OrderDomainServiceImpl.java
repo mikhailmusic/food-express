@@ -98,8 +98,8 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public List<OrderDto> restaurantOrders(Integer userId) {
-        List<Order> orders = orderRepository.findByRestaurantIdStatus(userId, Set.of(OrderStatus.CREATED,
+    public List<OrderDto> restaurantOrders(Integer restaurantId) {
+        List<Order> orders = orderRepository.findByRestaurantIdStatus(restaurantId, Set.of(OrderStatus.CREATED,
                 OrderStatus.CONFIRMED, OrderStatus.COOKING_PROCESS, OrderStatus.READY_FOR_DELIVERY, OrderStatus.OUT_FOR_DELIVERY)
         );
         return orders.stream().sorted(Comparator.comparing(Order::getCreationTime)).map(this::toDto).toList();
@@ -122,7 +122,7 @@ public class OrderDomainServiceImpl implements OrderDomainService {
         List<OrderItemDto> orderItems = order.getOrderItems().stream()
                 .filter(item -> item.getCount() != 0)
                 .map(item -> new OrderItemDto(item.getId(), item.getDish().getId(), item.getCount(),
-                        item.getDish().getName(), item.getDish().getImageURL()))
+                        item.getDish().getName(), item.getDish().getImageURL(), item.getDish().getVisible()))
                 .sorted(Comparator.comparing(OrderItemDto::dishName)).toList();
         Review review = order.getReview();
         ReviewDto reviewDto = null;

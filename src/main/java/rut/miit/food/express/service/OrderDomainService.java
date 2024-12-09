@@ -15,7 +15,7 @@ public interface OrderDomainService {
 
     OrderDto getOrderDetails(Integer id);
     List<OrderDto> userOrdersDraft(Integer userId);
-    List<OrderDto> restaurantOrders(Integer userId);
+    List<OrderDto> restaurantOrders(Integer restaurantId);
     List<OrderDto> userOrdersHistory(Integer userId);
 
 }

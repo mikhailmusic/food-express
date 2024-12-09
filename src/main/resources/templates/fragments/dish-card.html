@@ -1,5 +1,6 @@
 <div th:fragment="dish-card" class="card card-md card-text">
 
+    <div th:if="${!dish.isVisible}" class="overlay position-absolute top-0 start-0 w-100 h-100 bg-white opacity-50 pe-none"></div>
     <img th:src="${dish.imageURL}" class="card-img-top">
 
     <a th:text="${dish.name}" th:href="@{/dishes/{id}(id=${dish.id})}" class="text-center text-reset text-decoration-none">Название блюда</a>
@@ -10,7 +11,8 @@
             <span th:text="${dish.calories} + ' ккал'">Калории</span>,
             <span th:text="${dish.weight} + ' г'">Вес</span>
         </small>
-        <a sec:authorize="isAuthenticated()" th:href="@{/orders/add/add-item/{dishId}(dishId=${dish.id})}" class="btn btn-primary w-50">+ Добавить</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/orders/add/add-item/{dishId}(dishId=${dish.id})}" th:if="${dish.isVisible}"
+           class="btn btn-primary w-50">+ Добавить</a>
     </div>
 
 </div>
