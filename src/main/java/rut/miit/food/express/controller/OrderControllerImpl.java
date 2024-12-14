@@ -72,7 +72,6 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
     public String cancelOrder(@PathVariable Integer id) {
         orderService.cancelOrder(id);
         return "redirect:/orders/user";
-
     }
 
     @Override
@@ -80,6 +79,7 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
     public String createOrder(Principal principal, Model model) {
         List<OrderCreateViewModel> orderViewModels = new ArrayList<>();
         for (OrderDto dto : orderService.userOrdersDraft(principal.getName())) {
+
             List<OrderItemViewModel> itemViewModels = dto.orderItems()
                     .stream().map(item -> new OrderItemViewModel(item.id(), item.dishId(), item.count(), item.dishName(), item.imageURL(), item.isVisible())).toList();
             orderViewModels.add(new OrderCreateViewModel(dto.id(), dto.restaurantId(),dto.restaurantName(), dto.totalAmount(), itemViewModels));
@@ -87,7 +87,6 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
         OrderCreateListViewModel viewModel = new OrderCreateListViewModel(
                 createBaseViewModel("Корзина"), orderViewModels
         );
-
         model.addAttribute("model", viewModel);
         return "order-add";
 

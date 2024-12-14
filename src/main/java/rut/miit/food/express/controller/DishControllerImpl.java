@@ -42,7 +42,6 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
                 new DishViewModel(dto.id(), dto.name(), dto.price(), dto.weight(), dto.calories(), dto.imageURL(), dto.isVisible()),
                 dto.description(), dto.categoryName(), dto.restaurantName(), dto.restaurantId()
         );
-
         model.addAttribute("model", viewModel);
         return "dish-details";
 
@@ -64,8 +63,7 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
                 .stream().map(dto -> new CategoryViewModel(dto.id(), dto.name())).toList();
 
         DishListViewModel viewModel = new DishListViewModel(
-                createBaseViewModel("Блюда"),
-                dishViewModels, categories, wrapper.totalPages()
+                createBaseViewModel("Блюда"), dishViewModels, categories, wrapper.totalPages()
         );
         model.addAttribute("model", viewModel);
         model.addAttribute("form", form);
@@ -82,8 +80,7 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
                     dto.count()));
         }
         DishTopViewModel viewModel = new DishTopViewModel(
-                createBaseViewModel("Популярное"),
-                dishViewModels
+                createBaseViewModel("Популярное"), dishViewModels
         );
         model.addAttribute("model", viewModel);
         return "popular";

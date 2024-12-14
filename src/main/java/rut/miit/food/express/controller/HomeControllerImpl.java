@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import rut.miit.food.express.service.DishService;
 import rut.miit.food.express.service.RestaurantService;
 
 import java.util.List;
@@ -15,15 +14,10 @@ import java.util.List;
 @Controller
 public class HomeControllerImpl extends BaseControllerImpl implements HomeController {
     private  RestaurantService restaurantService;
-    private DishService dishService;
 
     @Autowired
     public void setRestaurantService(RestaurantService restaurantService) {
         this.restaurantService = restaurantService;
-    }
-    @Autowired
-    public void setDishService(DishService dishService) {
-        this.dishService = dishService;
     }
 
     @Override
