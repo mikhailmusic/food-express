@@ -32,28 +32,10 @@ import java.util.List;
 @RequestMapping("/admin/restaurants")
 public class AdminRestaurantControllerImpl extends BaseControllerImpl implements AdminRestaurantController {
     private RestaurantService restaurantService;
-    private DishCategoryService categoryService;
-    private DishService dishService;
-    private OrderDomainService orderService;
 
     @Autowired
     public void setRestaurantService(RestaurantService restaurantService) {
         this.restaurantService = restaurantService;
-    }
-
-    @Autowired
-    public void setCategoryService(DishCategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
-    @Autowired
-    public void setDishService(DishService dishService) {
-        this.dishService = dishService;
-    }
-
-    @Autowired
-    public void setOrderService(OrderDomainService orderService) {
-        this.orderService = orderService;
     }
 
     @Override
@@ -110,58 +92,6 @@ public class AdminRestaurantControllerImpl extends BaseControllerImpl implements
         model.addAttribute("model", viewModel);
         model.addAttribute("form", new RestaurantCreateForm("", "", "", "", null, null, BigDecimal.ZERO));
         return "restaurant-add";
-    }
-
-    @Override
-    @GetMapping("/{id}/orders")
-    public String listOrdersForRestaurant(@PathVariable Integer id, Model model) {
-        List<OrderRestaurantViewModel> orderViewModels = new ArrayList<>();
-
-        for (OrderDto dto : orderService.restaurantOrders(id)) {
-            List<OrderItemViewModel> itemViewModels = dto.orderItems()
-                    .stream().map(itemDto -> new OrderItemViewModel(itemDto.id(), itemDto.dishId(), itemDto.count(),
-                            itemDto.dishName(), itemDto.imageURL(), itemDto.isVisible())).toList();
-            OrderRestaurantViewModel orderViewModel = new OrderRestaurantViewModel(dto.id(), dto.creationTime(),
-                    dto.status().name(), itemViewModels);
-            orderViewModels.add(orderViewModel);
-        }
-        OrderRestaurantListViewModel viewModel = new OrderRestaurantListViewModel(
-                createBaseViewModel("Заказы"), orderViewModels
-        );
-        model.addAttribute("model", viewModel);
-        return "restaurant-orders";
-    }
-
-    @Override
-    @GetMapping("/{restaurantId}/add-dish")
-    public String addDish(@PathVariable Integer restaurantId, Model model) {
-        List<CategoryViewModel> categories = categoryService.getAllCategories()
-                .stream().map(dto -> new CategoryViewModel(dto.id(), dto.name())).toList();
-        DishInputViewModel viewModel = new DishInputViewModel(
-                createBaseViewModel("Добавление блюда"), categories
-        );
-        model.addAttribute("model", viewModel);
-        model.addAttribute("form", new DishCreateForm("", "", BigDecimal.ONE, 1, 1, "", null, restaurantId));
-        return "dish-add";
-    }
-
-    @Override
-    @PostMapping("/{restaurantId}/add-dish")
-    public String addDish(@PathVariable Integer restaurantId, @Valid @ModelAttribute("form") DishCreateForm form, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            List<CategoryViewModel> categories = categoryService.getAllCategories()
-                    .stream().map(dto -> new CategoryViewModel(dto.id(), dto.name())).toList();
-            DishInputViewModel viewModel = new DishInputViewModel(
-                    createBaseViewModel("Добавление блюда"), categories
-            );
-            model.addAttribute("model", viewModel);
-            model.addAttribute("form", form);
-            return "dish-add";
-        }
-        DishAddDto dto = new DishAddDto(form.name(), form.description(), form.price(), form.weight(),
-                form.calories(), form.imageURL(), form.restaurantId(), form.categoryId());
-        dishService.addDish(dto);
-        return "redirect:/restaurants/" + restaurantId;
     }
 
 }

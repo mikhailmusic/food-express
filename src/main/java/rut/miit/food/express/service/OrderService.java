@@ -6,7 +6,7 @@ import rut.miit.food.express.dto.order.OrderItemUpdateDto;
 
 import java.util.List;
 
-public interface OrderDomainService {
+public interface OrderService {
     void addOrderItemToOrder(OrderItemAddDto itemDto);
     void changeOrderItemToOrder(OrderItemUpdateDto itemDto);
     void createOrder(Integer id);
@@ -14,8 +14,8 @@ public interface OrderDomainService {
     void changeStatus(Integer id);
 
     OrderDto getOrderDetails(Integer id);
-    List<OrderDto> userOrdersDraft(Integer userId);
+    List<OrderDto> userOrdersDraft(String username);
     List<OrderDto> restaurantOrders(Integer restaurantId);
-    List<OrderDto> userOrdersHistory(Integer userId);
+    List<OrderDto> userOrdersHistory(String username);
 
 }

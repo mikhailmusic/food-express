@@ -1,6 +1,6 @@
 package rut.miit.food.express.exception;
 
-public class ValidationException extends RuntimeException {
+public class ValidationException extends CustomException {
     public ValidationException(String message) {
         super(message);
     }

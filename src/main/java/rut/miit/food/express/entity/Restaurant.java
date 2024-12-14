@@ -160,4 +160,11 @@ public class Restaurant extends BaseEntity{
         }
         setName(name);
     }
+
+    public boolean ownsDish(Dish dish) {
+        if (dish == null) {
+            throw new IllegalArgumentException("Dish must not be null");
+        }
+        return dish.getRestaurant().equals(this);
+    }
 }

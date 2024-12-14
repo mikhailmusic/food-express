@@ -5,6 +5,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import rut.miit.food.express.entity.Role;
+import rut.miit.food.express.entity.enums.UserRole;
 import rut.miit.food.express.repository.UserRoleRepository;
 
 import java.util.Optional;
@@ -19,7 +20,7 @@ public class UserRoleRepositoryImpl extends BaseRepository<Role, Integer> implem
     }
 
     @Override
-    public Optional<Role> findRoleByName(String role) {
+    public Optional<Role> findRoleByName(UserRole role) {
         try {
             return Optional.of(entityManager.createQuery("SELECT r FROM Role r WHERE r.name = :role", Role.class)
                     .setParameter("role", role)

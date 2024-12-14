@@ -11,7 +11,7 @@
             <span th:text="${dish.calories} + ' ккал'">Калории</span>,
             <span th:text="${dish.weight} + ' г'">Вес</span>
         </small>
-        <a sec:authorize="isAuthenticated()" th:href="@{/orders/add/add-item/{dishId}(dishId=${dish.id})}" th:if="${dish.isVisible}"
+        <a sec:authorize="isAuthenticated()" th:href="@{/orders/create/add-item/{dishId}(dishId=${dish.id})}" th:if="${dish.isVisible}"
            class="btn btn-primary w-50">+ Добавить</a>
     </div>
 

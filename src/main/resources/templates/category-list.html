@@ -14,7 +14,7 @@
             </div>
             <div class="col-4 text-end">
 
-                <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/categories/add}" class="btn btn-success">Добавить категорию</a>
+                <a sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')" th:href="@{/admin/categories/add}" class="btn btn-success">Добавить категорию</a>
             </div>
         </div>
 

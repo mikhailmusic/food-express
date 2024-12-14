@@ -4,9 +4,9 @@
 <body>
 <header th:replace="~{fragments/header}"></header>
 <main class="container py-3">
-    <h2 class="mb-4 fw-light text-center">Заказ</h2>
+    <h2 class="mb-4 fw-light text-center">Корзина</h2>
 
-    <div th:each="order : ${model.orders}" class="card mb-4">
+    <div th:each="order : ${model.orders}" class="card mb-2">
         <div class="card-body">
 
             <div class="d-flex justify-content-between ">
@@ -30,7 +30,7 @@
                        th:text="${item.dishName}"></a>
 
                     <div class="p-2">
-                        <form th:action="@{/orders/add/change-item}" th:method="post"
+                        <form th:action="@{/orders/create/change-item}" th:method="post"
                               class="d-flex justify-content-end">
                             <input type="hidden" name="itemId" th:value="${item.id}"/>
 
@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="text-end">
-                <a th:href="@{/orders/add/{id}(id=${order.id})}"
+                <a th:href="@{/orders/create/{id}(id=${order.id})}"
                    onclick="return confirm('Вы уверены, что хотите сделать заказ?');" class="btn btn-primary">Заказать</a>
             </div>
 

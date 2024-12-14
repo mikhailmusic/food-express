@@ -5,7 +5,7 @@
 <header th:replace="~{fragments/header}"></header>
 <main class="flex-shrink-0">
     <div class="container p-3">
-        <h2 class="mb-4 fw-light text-center">Пользователи</h2>
+        <h2 class="mb-2 fw-light text-center">Пользователи</h2>
 
         <form th:action="@{/admin/users}" th:method="get" th:object="${form}" class="w-25 mb-2">
             <div class="input-group">
@@ -21,11 +21,15 @@
 
         <div class="row row-cols-1 row-cols-md-4 g-2">
             <div class="col"  th:each="user : ${model.users}">
-                <a th:href="@{/users/{id}(id=${user.id})}" class="card h-100 text-decoration-none">
+                <a th:href="@{/admin/users/{username}/edit-profile(username=${user.login})}" class="card h-100 text-decoration-none" th:object="${user}">
                     <div class="card-body text-p">
-                        <h4 th:text="${user.login}" class="card-title"></h4>
-                        <p th:text="${'Имя: ' + user.firstName}"></p>
-                        <p th:text="${'Идентификатор: ' + user.id}"></p>
+                        <h4 th:text="*{login}" class="card-title"></h4>
+                        <p th:text="*{'Имя: ' + firstName}"></p>
+                        <p th:text="*{'Номер телефона: ' + (phoneNumber ?: 'Не указан')}"></p>
+                        <p th:text="*{'Адрес: ' + address}"></p>
+                        <p th:text="*{'Дата рождения: ' + birthDate}"></p>
+                        <p th:text="*{'Идентификатор: ' + id}"></p>
+                        <p th:text="*{'Роль: ' + role}"></p>
                     </div>
                 </a>
             </div>

@@ -8,5 +8,6 @@ public record UserDto(
         String phoneNumber,
         String address,
         LocalDate birthDate,
-        String login
+        String login,
+        String role
 ) {}

@@ -17,6 +17,8 @@ import rut.miit.food.express.dto.user.UserUpdateDto;
 import rut.miit.food.express.dto.user.UserDto;
 import rut.miit.food.express.service.UserService;
 
+import java.security.Principal;
+
 
 @Controller
 @RequestMapping("/users")
@@ -29,8 +31,8 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
     }
 
     @Override
-    @PostMapping("/{id}/edit")
-    public String editUserProfile(@PathVariable Integer id, @Valid @ModelAttribute("form") UserEditForm form, BindingResult result, Model model){
+    @PostMapping("/edit-profile")
+    public String editUserProfile(@Valid @ModelAttribute("form") UserEditForm form, BindingResult result, Model model){
         if (result.hasErrors()) {
             EditViewModel viewModel = new EditViewModel(
                     createBaseViewModel("Редактирование профиля")
@@ -39,15 +41,15 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
             model.addAttribute("form", form);
             return "user-edit";
         }
-        UserUpdateDto dto = new UserUpdateDto(id, form.firstName(), form.phoneNumber(), form.address());
+        UserUpdateDto dto = new UserUpdateDto(form.username(), form.firstName(), form.phoneNumber(), form.address());
         userService.updateUserInfo(dto);
-        return "redirect:/admin/users";
+        return "redirect:/users/profile";
 
     }
 
     @Override
-    @PostMapping("/{id}/change-password")
-    public String changePassword(@PathVariable Integer id, @Valid @ModelAttribute("form") UserPasswordChangeForm form, BindingResult result, Model model){
+    @PostMapping("/change-password")
+    public String changePassword(@Valid @ModelAttribute("form") UserPasswordChangeForm form, BindingResult result, Model model){
         if (result.hasErrors()) {
             EditViewModel viewModel = new EditViewModel(
                     createBaseViewModel("Изменение пароля")
@@ -57,19 +59,19 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
             return "user-password";
         }
 
-        UserChangePasswordDto dto = new UserChangePasswordDto(id, form.oldPassword(), form.newPassword(), form.confirmPassword());
+        UserChangePasswordDto dto = new UserChangePasswordDto(form.username(), form.oldPassword(), form.newPassword(), form.confirmPassword());
         userService.updateUserPassword(dto);
-        return "redirect:/admin/users/";
+        return "redirect:/users/profile";
 
     }
 
     @Override
-    @GetMapping("/{id}")
-    public String userProfile(@PathVariable Integer id, Model model){
-        UserDto dto = userService.getUser(id);
+    @GetMapping("/profile")
+    public String userProfile(Principal principal, Model model){
+        UserDto dto = userService.getUser(principal.getName());
         UserProfileViewModel viewModel = new UserProfileViewModel(
                 createBaseViewModel("Профиль"),
-                new UserViewModel(dto.id(), dto.firstName(), dto.phoneNumber(), dto.address(), dto.birthDate(), dto.login())
+                new UserViewModel(dto.id(), dto.firstName(), dto.phoneNumber(), dto.address(), dto.birthDate(), dto.login(), dto.role())
         );
         model.addAttribute("model", viewModel);
         return "user-details";
@@ -77,27 +79,27 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
     }
 
     @Override
-    @GetMapping("/{id}/edit")
-    public String editUserProfile(@PathVariable Integer id, Model model){
-        UserDto dto = userService.getUser(id);
+    @GetMapping("/edit-profile")
+    public String editUserProfile(Principal principal, Model model){
+        UserDto dto = userService.getUser(principal.getName());
         EditViewModel viewModel = new EditViewModel(
                 createBaseViewModel("Редактирование профиля")
         );
         model.addAttribute("model", viewModel);
-        model.addAttribute("form", new UserEditForm(dto.id(), dto.firstName(), dto.phoneNumber(), dto.address()));
+        model.addAttribute("form", new UserEditForm(dto.login(), dto.firstName(), dto.phoneNumber(), dto.address()));
         return "user-edit";
 
     }
 
     @Override
-    @GetMapping("/{id}/change-password")
-    public String changePassword(@PathVariable Integer id, Model model){
-        UserDto dto = userService.getUser(id);
+    @GetMapping("/change-password")
+    public String changePassword(Principal principal, Model model){
+        UserDto dto = userService.getUser(principal.getName());
         EditViewModel viewModel = new EditViewModel(
                 createBaseViewModel("Изменение пароля")
         );
         model.addAttribute("model", viewModel);
-        model.addAttribute("form", new UserPasswordChangeForm(dto.id(), "", "", ""));
+        model.addAttribute("form", new UserPasswordChangeForm(dto.login(), "", "", ""));
         return "user-password";
 
     }

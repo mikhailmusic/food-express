@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head}"></head>
 <body>
+<div th:replace="~{fragments/error-modal}"></div>
 <main class="d-flex justify-content-center align-items-center vh-100">
     <div class="col-md-5">
         <div class="card card-body shadow-sm">
@@ -10,7 +11,7 @@
                 <div class="row">
                     <div class="col-12 col-md-6 mb-3">
                         <label for="registerName" class="form-label">Имя</label>
-                        <input th:field="*{firstName}" th:errorclass="is-invalid" type="text" class="form-control" id="registerName">
+                        <input th:field="*{firstName}" th:errorclass="is-invalid" type="text" class="form-control" id="registerName" required>
                         <small th:if="${#fields.hasErrors('firstName')}"
                                th:errors="*{firstName}"
                                class="text-danger">Error message</small>
@@ -18,7 +19,7 @@
                     </div>
                     <div class="col-12 col-md-6 mb-3">
                         <label for="login" class="form-label">Логин</label>
-                        <input th:field="*{login}" th:errorclass="is-invalid" type="text" class="form-control" id="login">
+                        <input th:field="*{login}" th:errorclass="is-invalid" type="text" class="form-control" id="login" required>
                         <small th:if="${#fields.hasErrors('login')}"
                                th:errors="*{login}"
                                class="text-danger">Error message</small>
@@ -26,14 +27,14 @@
 
                     <div class="col-12 col-md-6 mb-3">
                         <label for="address" class="form-label">Адрес</label>
-                        <input th:field="*{address}" th:errorclass="is-invalid" type="text" class="form-control" id="address" >
+                        <input th:field="*{address}" th:errorclass="is-invalid" type="text" class="form-control" id="address" required>
                         <small th:if="${#fields.hasErrors('address')}"
                                th:errors="*{address}"
                                class="text-danger">Error message</small>
                     </div>
                     <div class="col-12 col-md-6 mb-3">
                         <label for="birthDate" class="form-label">Дата рождения</label>
-                        <input th:field="*{birthDate}" th:errorclass="is-invalid" type="date" class="form-control" id="birthDate">
+                        <input th:field="*{birthDate}" th:errorclass="is-invalid" type="date" class="form-control" id="birthDate" required>
                         <small th:if="${#fields.hasErrors('birthDate')}"
                                th:errors="*{birthDate}"
                                class="text-danger">Error message</small>
@@ -43,14 +44,16 @@
                 <div class="row">
                     <div class="col-12 col-md-6 mb-3">
                         <label for="password" class="form-label">Пароль</label>
-                        <input th:field="*{password}" th:errorclass="is-invalid" type="password" class="form-control" id="password">
+                        <input th:field="*{password}" th:errorclass="is-invalid" type="password" class="form-control"
+                               id="password" required minlength="8" maxlength="20">
                         <small th:if="${#fields.hasErrors('password')}"
                                th:errors="*{password}"
                                class="text-danger">Error message</small>
                     </div>
                     <div class="col-12 col-md-6 mb-3">
                         <label for="confirmPassword" class="form-label">Подтвердите пароль</label>
-                        <input th:field="*{confirmPassword}" th:errorclass="is-invalid" type="password" class="form-control" id="confirmPassword">
+                        <input th:field="*{confirmPassword}" th:errorclass="is-invalid" type="password" class="form-control"
+                               id="confirmPassword" required minlength="8" maxlength="20">
                         <small th:if="${#fields.hasErrors('confirmPassword')}"
                                th:errors="*{confirmPassword}"
                                class="text-danger">Error message</small>

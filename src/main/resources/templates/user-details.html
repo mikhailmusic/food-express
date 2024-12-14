@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/head}"></head>
 <body>
 <header th:replace="~{fragments/header}"></header>
@@ -8,17 +8,18 @@
         <h2 class="mb-5 fw-light text-center">Профиль</h2>
 
         <div th:object="${model.user}">
-            <p>Идентификатор: <b th:text="*{id}"></b></p>
+            <p sec:authorize="hasRole('ADMIN')">Идентификатор: <b th:text="*{id}"></b></p>
             <p>Логин: <b th:text="*{login}"></b></p>
             <p>Имя: <b th:text="*{firstName}"></b></p>
             <p>Дата рождения: <b th:text="*{#temporals.format(birthDate, 'dd.MM.yyyy')}"></b></p>
             <p>Адрес: <b th:text="*{address}"></b></p>
             <p>Номер телефона: <b th:text="*{phoneNumber} != null ? *{phoneNumber} : 'Не указан'"></b></p>
+            <p sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')">Роль: <b th:text="*{role}"></b></p>
 
 
             <div class="mt-5 text-center">
-                <a class="btn btn-secondary w-50" th:href="@{/users/{id}/edit(id=${id})}">Изменить профиль</a>
-                <a class="btn btn-secondary w-50 mt-2" th:href="@{/users/{id}/change-password(id=${id})}">Изменить пароль</a>
+                <a class="btn btn-secondary w-50" th:href="@{/users/edit-profile}">Изменить профиль</a>
+                <a class="btn btn-secondary w-50 mt-2" th:href="@{/users/change-password}">Изменить пароль</a>
             </div>
 
         </div>

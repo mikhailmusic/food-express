@@ -17,7 +17,7 @@ import rut.miit.food.express.repository.DishRepository;
 import rut.miit.food.express.repository.OrderItemRepository;
 import rut.miit.food.express.repository.OrderRepository;
 import rut.miit.food.express.repository.UserRepository;
-import rut.miit.food.express.service.OrderDomainService;
+import rut.miit.food.express.service.OrderService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,14 +27,14 @@ import java.util.Set;
 
 
 @Service
-public class OrderDomainServiceImpl implements OrderDomainService {
+public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final DishRepository dishRepository;
     private final OrderItemRepository orderItemRepository;
 
     @Autowired
-    public OrderDomainServiceImpl(OrderRepository orderRepository, UserRepository userRepository, DishRepository dishRepository, OrderItemRepository orderItemRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, UserRepository userRepository, DishRepository dishRepository, OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.dishRepository = dishRepository;
@@ -43,14 +43,13 @@ public class OrderDomainServiceImpl implements OrderDomainService {
 
     @Override
     public void addOrderItemToOrder(OrderItemAddDto itemDto) {
-        User user = userRepository.findById(itemDto.userId()).orElseThrow(() -> new UserNotFoundException(itemDto.userId()));
+        User user = userRepository.findByUsername(itemDto.username()).orElseThrow(() -> new UserNotFoundException(itemDto.username()));
         Dish dish = dishRepository.findById(itemDto.dishId()).orElseThrow(() -> new DishNotFoundException(itemDto.dishId()));
         Restaurant restaurant = dish.getRestaurant();
 
         Order order = user.getOrders().stream()
                 .filter(o -> o.getStatus().equals(OrderStatus.DRAFT) && o.getRestaurant().equals(restaurant))
-                .findFirst().orElse(null);
-        if (order == null) order = new Order(user, restaurant);
+                .findFirst().orElseGet(() -> new Order(user, restaurant));
         orderRepository.save(order);
         OrderItem item = order.addOrder(dish, itemDto.count());
         orderItemRepository.save(item);
@@ -92,8 +91,8 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public List<OrderDto> userOrdersDraft(Integer userId) {
-        List<Order> orders = orderRepository.findByUserIdStatus(userId, OrderStatus.DRAFT);
+    public List<OrderDto> userOrdersDraft(String username) {
+        List<Order> orders = orderRepository.findByUserAndStatus(username, OrderStatus.DRAFT);
         return orders.stream().filter(Order::notEmpty).map(this::toDto).toList();
     }
 
@@ -106,10 +105,10 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     }
 
     @Override
-    public List<OrderDto> userOrdersHistory(Integer userId) {
+    public List<OrderDto> userOrdersHistory(String username) {
         LocalDateTime nowTime = LocalDateTime.now();
         LocalDateTime startTime = nowTime.minusDays(90);
-        List<Order> orders = orderRepository.findByUserId(userId, startTime, nowTime);
+        List<Order> orders = orderRepository.findByUser(username, startTime, nowTime);
         return orders.stream().sorted(Comparator.comparing(Order::getCreationTime).reversed()).map(this::toDto).toList();
     }
 

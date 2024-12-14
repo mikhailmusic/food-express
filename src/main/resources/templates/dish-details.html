@@ -12,7 +12,7 @@
                 <h2 th:text="*{name + ' | ' + price + ' ₽'}" class="mb-3 fw-light"></h2>
             </div>
             <div class="col-4 text-end">
-                <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dishes/{id}/edit(id=${id})}" class="btn btn-secondary">Изменить</a>
+                <a sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')" th:href="@{/admin/dishes/{id}/edit(id=${id})}" class="btn btn-secondary">Изменить</a>
             </div>
         </div>
         <div class="container col-md-4">
@@ -31,9 +31,9 @@
                     Ресторан: <b th:text="${model.restaurantName}"></b>
                 </a>
             </div>
-            <p sec:authorize="hasRole('ADMIN')">Видимость блюда: <b th:text="${model.dishViewModel.isVisible ? 'Видимо' : 'Невидимо'}"></b></p>
+            <p sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')">Видимость блюда: <b th:text="${model.dishViewModel.isVisible ? 'Видимо' : 'Невидимо'}"></b></p>
             <div th:if="*{isVisible}" class=" text-center my-3">
-                <a class="btn btn-secondary w-50" th:href="@{/dishes/{id}(id=${id})}">Добавить в заказ</a>
+                <a class="btn btn-secondary w-50" th:href="@{/orders/create/add-item/{id}(id=${id})}">Добавить в заказ</a>
             </div>
 
 

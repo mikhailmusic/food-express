@@ -30,19 +30,18 @@ public class OrderRepositoryImpl extends BaseRepository<Order, Integer> implemen
     }
 
     @Override
-    public List<Order> findByUserId(Integer userId, LocalDateTime start, LocalDateTime end) {
-        return entityManager.createQuery("SELECT o FROM Order o WHERE o.user.id = :userId AND o.creationTime BETWEEN :start AND :end", Order.class)
-                .setParameter("userId", userId)
+    public List<Order> findByUser(String username, LocalDateTime start, LocalDateTime end) {
+        return entityManager.createQuery("SELECT o FROM Order o WHERE o.user.login = :username AND o.creationTime BETWEEN :start AND :end", Order.class)
+                .setParameter("username", username)
                 .setParameter("start", start)
                 .setParameter("end", end)
                 .getResultList();
     }
-    // SELECT o FROM Order o WHERE o.user.id = :userId AND o.creationTime >= :dateFrom
 
     @Override
-    public List<Order> findByUserIdStatus(Integer userId, OrderStatus status) {
-        return entityManager.createQuery("SELECT o FROM Order o WHERE o.user.id = :userId AND o.status =: status", Order.class)
-                .setParameter("userId", userId)
+    public List<Order> findByUserAndStatus(String username, OrderStatus status) {
+        return entityManager.createQuery("SELECT o FROM Order o WHERE o.user.login = :username AND o.status =: status", Order.class)
+                .setParameter("username", username)
                 .setParameter("status", status)
                 .getResultList();
     }

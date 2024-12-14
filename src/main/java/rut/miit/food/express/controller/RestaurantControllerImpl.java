@@ -100,7 +100,7 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
                 toViewModel(restaurantDto), reviewViewModels);
 
         model.addAttribute("model", viewModel);
-        return "restaurant-reviews";
+        return "reviews-restaurant";
     }
 
     private RestaurantViewModel toViewModel(RestaurantDto dto) {

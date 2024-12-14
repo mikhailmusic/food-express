@@ -120,7 +120,7 @@ public class Order extends BaseEntity {
         if (status != OrderStatus.DRAFT)
             throw new ValidationException("Cannot be added to order because status is not DRAFT");
 
-        if (!dish.getRestaurant().getId().equals(restaurant.getId())) {
+        if (!restaurant.ownsDish(dish)) {
             throw new ValidationException("Dish does not belong to this restaurant");
         }
 
@@ -157,7 +157,7 @@ public class Order extends BaseEntity {
 
         BigDecimal total = calculateTotalAmount();
         if (total.compareTo(restaurant.getMinOrderAmount()) < 0) {
-            throw new ValidationException("Order amount is less than the minimum order amount in the restaurant");
+            throw new ValidationException("Order amount is less than the restaurant's minimum order amount: " + restaurant.getMinOrderAmount());
         }
         creationTime = LocalDateTime.now();
         status = OrderStatus.CREATED;

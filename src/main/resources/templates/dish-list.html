@@ -5,7 +5,7 @@
 <header th:replace="~{fragments/header}"></header>
 <main>
     <div class="container py-3 px-5">
-        <h2 class="mb-3 fw-light text-center">Блюда</h2>
+        <h2 class="mb-2 fw-light text-center">Блюда</h2>
 
 
         <form th:action="@{/dishes}" th:method="get" th:object="${form}" class="w-75 d-flex gap-1 mb-2">
@@ -24,7 +24,7 @@
             </select>
             <button class="btn btn-primary" type="submit">Поиск</button>
 
-            <div sec:authorize="hasRole('ADMIN')" class="form-check form-switch flex-shrink-0 mx-3 align-items-center">
+            <div sec:authorize="hasAnyRole('ADMIN', 'MODERATOR')" class="form-check form-switch flex-shrink-0 mx-3 align-items-center">
                 <input type="hidden" name="enableDish" th:value="${!form.enableDish}" />
                 <input class="form-check-input" type="checkbox" id="toggle"
                        th:checked="${!form.enableDish}" onchange="this.form.submit()">

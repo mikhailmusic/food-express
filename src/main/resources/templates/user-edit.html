@@ -6,8 +6,8 @@
 <main>
     <div class="container p-3 col-md-3">
         <h2 class="mb-4 fw-light text-center">Изменение профиля</h2>
-        <form th:action="@{/users/{id}/edit(id=${form.id})}" th:object="${form}" th:method="post">
-            <input th:field="*{id}" type="hidden" id="id" class="form-control text-center"/>
+        <form th:action="@{/users/edit-profile}" th:object="${form}" th:method="post">
+            <input th:field="*{username}" type="hidden" id="id" class="form-control text-center"/>
             <div class="mb-2">
                 <label for="registerName" class="form-label">Имя</label>
                 <input th:field="*{firstName}" th:errorclass="is-invalid" type="text" class="form-control" id="registerName">

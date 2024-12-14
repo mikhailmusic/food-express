@@ -3,18 +3,18 @@ package rut.miit.food.express.controller;
 import food.express.contracts.controller.DishController;
 import food.express.contracts.form.DishSearchForm;
 import food.express.contracts.viewmodel.category.CategoryViewModel;
-import food.express.contracts.viewmodel.dish.DishInfoViewModel;
-import food.express.contracts.viewmodel.dish.DishListViewModel;
-import food.express.contracts.viewmodel.dish.DishViewModel;
+import food.express.contracts.viewmodel.dish.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import rut.miit.food.express.dto.dish.DishByCategoryDto;
 import rut.miit.food.express.util.PageWrapper;
 import rut.miit.food.express.dto.dish.DishDto;
 import rut.miit.food.express.service.DishCategoryService;
 import rut.miit.food.express.service.DishService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -70,5 +70,22 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
         model.addAttribute("model", viewModel);
         model.addAttribute("form", form);
         return "dish-list";
+    }
+
+    @Override
+    @GetMapping("/popular")
+    public String popular(Model model) {
+        List<DishByCategoryViewModel> dishViewModels = new ArrayList<>();
+        for (DishByCategoryDto dto : dishService.popularDish()) {
+            dishViewModels.add(new DishByCategoryViewModel(dto.id(), dto.name(),
+                    dto.dishes().stream().map(dishDto -> new DishViewModel(dishDto.id(), dishDto.name(), dishDto.price(), dishDto.weight(), dishDto.calories(), dishDto.imageURL(), dishDto.isVisible())).toList(),
+                    dto.count()));
+        }
+        DishTopViewModel viewModel = new DishTopViewModel(
+                createBaseViewModel("Популярное"),
+                dishViewModels
+        );
+        model.addAttribute("model", viewModel);
+        return "popular";
     }
 }

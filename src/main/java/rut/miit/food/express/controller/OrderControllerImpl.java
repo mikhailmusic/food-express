@@ -1,10 +1,12 @@
 package rut.miit.food.express.controller;
 
 import food.express.contracts.controller.OrderController;
+import food.express.contracts.form.OrderItemEditForm;
 import food.express.contracts.form.ReviewCreateForm;
 import food.express.contracts.viewmodel.CreateViewModel;
 import food.express.contracts.viewmodel.order.*;
 import food.express.contracts.viewmodel.review.ReviewViewModel;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,23 +14,25 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import rut.miit.food.express.dto.order.OrderDto;
+import rut.miit.food.express.dto.order.OrderItemAddDto;
 import rut.miit.food.express.dto.order.OrderItemUpdateDto;
 import rut.miit.food.express.dto.review.ReviewAddDto;
 import rut.miit.food.express.dto.review.ReviewDto;
-import rut.miit.food.express.service.OrderDomainService;
+import rut.miit.food.express.service.OrderService;
 import rut.miit.food.express.service.ReviewService;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/orders")
 public class OrderControllerImpl extends BaseControllerImpl implements OrderController {
-    private OrderDomainService orderService;
+    private OrderService orderService;
     private ReviewService reviewService;
 
     @Autowired
-    public void setOrderService(OrderDomainService orderService) {
+    public void setOrderService(OrderService orderService) {
         this.orderService = orderService;
     }
     @Autowired
@@ -37,51 +41,51 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
     }
 
     @Override
-    @GetMapping("/add/add-item/{dishId}")
-    public  String addDishToOrder(@PathVariable Integer dishId) {
-        // TODO
+    @GetMapping("/create/add-item/{dishId}")
+    public  String addDishToOrder(Principal principal, @PathVariable Integer dishId, HttpServletRequest request) {
+        OrderItemAddDto dto = new OrderItemAddDto(dishId, principal.getName(), 1);
+        orderService.addOrderItemToOrder(dto);
+        String refererUrl = request.getHeader("Referer");
+        if (refererUrl != null) return "redirect:" + refererUrl;
         return "redirect:/restaurants";
     }
 
     @Override
-    @PostMapping("/add/change-item")
-    public String editDishCount(@RequestParam Integer itemId, @RequestParam Integer newCount) {
-        // TODO
-        OrderItemUpdateDto dto = new OrderItemUpdateDto(itemId, newCount);
+    @PostMapping("/create/change-item")
+    public String editDishCount(@Valid @ModelAttribute("form") OrderItemEditForm form) {
+        OrderItemUpdateDto dto = new OrderItemUpdateDto(form.itemId(), form.count());
         orderService.changeOrderItemToOrder(dto);
-        return "redirect:/orders/add/user/1";
+        return "redirect:/orders/create/user";
 
     }
 
     @Override
-    @GetMapping("/add/{id}")
+    @GetMapping("/create/{id}")
     public String createOrder(@PathVariable Integer id) {
-        // TODO
         orderService.createOrder(id);
-        return "redirect:/orders/" + id;
+        return "redirect:/orders/user";
 
     }
 
     @Override
     @PostMapping("/{id}")
     public String cancelOrder(@PathVariable Integer id) {
-        // TODO
         orderService.cancelOrder(id);
-        return "";
+        return "redirect:/orders/user";
 
     }
 
     @Override
-    @GetMapping("/add/user/{userId}")
-    public String createOrder(@PathVariable Integer userId, Model model) {
+    @GetMapping("/create/user")
+    public String createOrder(Principal principal, Model model) {
         List<OrderCreateViewModel> orderViewModels = new ArrayList<>();
-        for (OrderDto dto : orderService.userOrdersDraft(userId)) {
+        for (OrderDto dto : orderService.userOrdersDraft(principal.getName())) {
             List<OrderItemViewModel> itemViewModels = dto.orderItems()
-                    .stream().map(item -> new OrderItemViewModel(item.id(), item.dishId(), item.count(), item.dishName(), item.imageURL())).toList();
-            orderViewModels.add(new OrderCreateViewModel(dto.id(), dto.restaurantId(),dto.restaurantName(), itemViewModels));
+                    .stream().map(item -> new OrderItemViewModel(item.id(), item.dishId(), item.count(), item.dishName(), item.imageURL(), item.isVisible())).toList();
+            orderViewModels.add(new OrderCreateViewModel(dto.id(), dto.restaurantId(),dto.restaurantName(), dto.totalAmount(), itemViewModels));
         }
         OrderCreateListViewModel viewModel = new OrderCreateListViewModel(
-                createBaseViewModel("Заказ"), orderViewModels
+                createBaseViewModel("Корзина"), orderViewModels
         );
 
         model.addAttribute("model", viewModel);
@@ -90,11 +94,11 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
     }
 
     @Override
-    @GetMapping("/user/{id}")
-    public String listOrders(@PathVariable Integer id, Model model) {
+    @GetMapping("/user")
+    public String listOrders(Principal principal, Model model) {
         List<OrderInfoViewModel> orderViewModels = new ArrayList<>();
 
-        for (OrderDto dto : orderService.userOrdersHistory(id)){
+        for (OrderDto dto : orderService.userOrdersHistory(principal.getName())){
             orderViewModels.add(toViewModel(dto));
         }
         OrderInfoListViewModel viewModel = new OrderInfoListViewModel(
@@ -143,7 +147,7 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
         }
         ReviewAddDto dto = new ReviewAddDto(id, form.rating(), form.text());
         reviewService.leaveReview(dto);
-        return "redirect:/orders/" + id;
+        return "redirect:/orders/user";
 
     }
 
@@ -151,14 +155,14 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
     private OrderInfoViewModel toViewModel(OrderDto dto) {
         List<OrderItemViewModel> itemViewModels = dto.orderItems()
                 .stream().map(itemDto -> new OrderItemViewModel(itemDto.id(), itemDto.dishId(), itemDto.count(),
-                        itemDto.dishName(), itemDto.imageURL())).toList();
+                        itemDto.dishName(), itemDto.imageURL(), itemDto.isVisible())).toList();
         ReviewDto reviewDto = dto.reviewDto();
         ReviewViewModel reviewViewModel = null;
         if (reviewDto != null) {
-            reviewViewModel = new ReviewViewModel(reviewDto.rating(), reviewDto.text(), reviewDto.date());
+            reviewViewModel = new ReviewViewModel(reviewDto.rating(), reviewDto.text(), reviewDto.date(), reviewDto.userFirstName());
         }
         OrderInfoViewModel orderViewModel = new OrderInfoViewModel(dto.id(), dto.creationTime(), dto.deliveryTime(),
-                dto.status().name(), dto.restaurantId(), dto.restaurantName(), itemViewModels, reviewViewModel);
+                dto.status().name(), dto.totalAmount(), dto.restaurantId(), dto.restaurantName(), itemViewModels, reviewViewModel);
         return orderViewModel;
     }
 

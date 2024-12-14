@@ -1,11 +1,13 @@
 package rut.miit.food.express.entity;
 
 import jakarta.persistence.*;
+import rut.miit.food.express.entity.enums.UserRole;
 import rut.miit.food.express.exception.InvalidValueException;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Set;
+import java.util.function.BiPredicate;
 
 @Entity
 @Table(name = "users")
@@ -18,13 +20,15 @@ public class User extends BaseEntity{
     private String password;
     private Set<Order> orders;
     private Set<Review> reviews;
+    private Role role;
 
-    public User(String firstName, String login, String address, LocalDate birthDate, String password, String confirmPassword, Set<String> existingLogins) {
+    public User(String firstName, String login, String address, LocalDate birthDate, String password, String confirmPassword, String hash, Set<String> existingLogins, Role role) {
         setLogin(login, existingLogins);
         setFirstName(firstName);
         setAddress(address);
         setBirthDate(birthDate);
-        setPassword(password, confirmPassword);
+        setPassword(password, confirmPassword, hash);
+        checkCreateRole(role);
     }
 
     protected User() {
@@ -70,6 +74,12 @@ public class User extends BaseEntity{
         return reviews;
     }
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "role_id", nullable = false)
+    public Role getRole() {
+        return role;
+    }
+
     public void setFirstName(String firstName) {
         if (firstName == null || firstName.trim().length() < 2) {
             throw new InvalidValueException("First Name must be at least 2 characters and not null");
@@ -105,8 +115,8 @@ public class User extends BaseEntity{
     }
 
     protected void setLogin(String login) {
-        if (login == null || login.trim().length() < 5) {
-            throw new InvalidValueException("Login must not be null and must be at least 5 characters long");
+        if (login == null || login.trim().length() < 5 || login.trim().length() > 20) {
+            throw new InvalidValueException("Login length must be 5-20 characters and cannot be zero");
         }
         this.login = login;
     }
@@ -123,30 +133,27 @@ public class User extends BaseEntity{
         this.reviews = reviews;
     }
 
-    public void changePassword(String oldPassword, String newPassword, String confirmPassword) {
-        if (!password.equals(oldPassword)) {
-            throw new InvalidValueException("Old password was entered incorrectly");
-        }
-        setPassword(newPassword, confirmPassword);
+    public void setRole(Role role) {
+        this.role = role;
     }
 
-    private void setPassword(String password, String confirmPassword) {
+    private void setPassword(String password, String confirmPassword, String hash) {
+        if (password == null || confirmPassword == null || password.length() < 8 || password.length() > 25) {
+            throw new InvalidValueException("Password is incorrect: " + password + " | " + confirmPassword);
+        }
         if (!password.equals(confirmPassword)) {
-            throw new InvalidValueException("Password and its confirmation do not match");
+            throw new InvalidValueException("Password and its confirmation do not match: " + password + " | " + confirmPassword);
         }
+        if (hash == null || hash.length() < 32) throw new InvalidValueException("This is not a hash");
 
-        if (!isPasswordValid(password)) {
-            throw new InvalidValueException("Password is not secure");
-        }
-
-        this.password = password;
+        this.password = hash;
     }
 
-    private boolean isPasswordValid(String password) {
-        if (password == null || password.length() < 8) {
-            return false;
+    public void changePassword(String oldPassword, String newPassword, String confirmPassword, String hash, BiPredicate<String, String> check) {
+        if (!check.test(oldPassword, password)) {
+            throw new InvalidValueException("Old password is incorrect");
         }
-        return true;
+        setPassword(newPassword, confirmPassword, hash);
     }
 
     protected void setLogin(String login, Set<String> existingLogins) {
@@ -165,5 +172,12 @@ public class User extends BaseEntity{
             throw new InvalidValueException("Phone number already exists: " + phoneNumber);
         }
         setPhoneNumber(phoneNumber);
+    }
+
+    private void checkCreateRole(Role role) {
+        if (role == null || role.getName() != UserRole.USER) {
+            throw new InvalidValueException("Registration requires exactly one role: USER");
+        }
+        setRole(role);
     }
 }

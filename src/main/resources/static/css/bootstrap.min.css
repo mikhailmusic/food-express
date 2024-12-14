@@ -13458,8 +13458,8 @@ textarea.form-control-lg {
 }
 
 main{
-    margin-right: 1rem;
-    margin-left: 1rem;
+    margin-right: 2rem;
+    margin-left: 2rem;
     min-height: 100vh;
 }
 body{
@@ -13497,7 +13497,12 @@ body{
 .ave-img{
     height: 8em;
     object-fit: cover;
+    width: 100%;
 }
 .content {
     min-height: 68vh;
+}
+
+.dropdown-menu > *:hover {
+    background-color: #c1c7cd;
 }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+    <div class="container p-3 col-md-4">
+        <h2 class="mb-4 fw-light text-center">Изменение профиля</h2>
+        <h5 th:text="${model.username}"></h5>
+        <form th:action="@{/admin/users/{username}/edit-profile(username = ${form.username})}" th:object="${form}" th:method="post">
+            <input th:field="*{username}" type="hidden" id="id" class="form-control text-center"/>
+
+            <div class="mb-2">
+                <label for="isVisible" class="form-label">Роль</label>
+                <select th:field="*{role}" id="isVisible" class="form-select">
+                    <option th:each="role : ${model.roles}" th:value="${role}" th:text="${role}"></option>
+                </select>
+                <small th:if="${#fields.hasErrors('role')}" th:errors="*{role}" class="text-danger">Error message</small>
+
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-secondary">Изменить профиль</button>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer}"></footer>
+</body>
+</html>

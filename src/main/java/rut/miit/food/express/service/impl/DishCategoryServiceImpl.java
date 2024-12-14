@@ -4,6 +4,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
+import rut.miit.food.express.dto.category.CategoryAddDto;
 import rut.miit.food.express.dto.category.CategoryDto;
 import rut.miit.food.express.entity.DishCategory;
 import rut.miit.food.express.repository.DishCategoryRepository;
@@ -24,9 +25,9 @@ public class DishCategoryServiceImpl implements DishCategoryService {
 
     @Override
     @CacheEvict(value = "categories", allEntries = true)
-    public void addCategory(String name) {
+    public void addCategory(CategoryAddDto dto) {
         Set<String> existingNames = categoryRepository.findAllNames();
-        DishCategory category = new DishCategory(name, existingNames);
+        DishCategory category = new DishCategory(dto.name(), existingNames);
         categoryRepository.save(category);
 
     }

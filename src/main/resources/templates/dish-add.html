@@ -6,7 +6,7 @@
 <main>
     <div class="container p-3 col-md-4">
         <h2 class="mb-4 fw-light text-center">Добавление блюда</h2>
-        <form th:action="@{/admin/restaurants/{id}/add-dish(id=${form.restaurantId})}" th:object="${form}" th:method="post">
+        <form th:action="@{/admin/dishes/{restaurantId}/add-dish(restaurantId=${form.restaurantId})}" th:object="${form}" th:method="post">
             <input th:field="*{restaurantId}" type="hidden" id="restaurantId" class="form-control text-center"/>
             <div class="mb-2">
                 <label for="name" class="form-label">Название</label>

@@ -15,6 +15,7 @@ import rut.miit.food.express.service.ReviewService;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -39,7 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Cacheable("reviews")
     public List<ReviewDto> reviewsForRestaurant(Integer restaurantId) {
         List<Review> reviews = reviewRepository.findByRestaurantId(restaurantId);
-        return reviews.stream().sorted(Comparator.comparing(Review::getDate).reversed()).map(this::toDto).toList();
+        return reviews.stream().sorted(Comparator.comparing(Review::getDate).reversed()).map(this::toDto).collect(Collectors.toList());
     }
 
 

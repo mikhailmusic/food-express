@@ -14,8 +14,8 @@ public interface OrderRepository extends
         CreateRepository<Order, Integer>, ReadRepository<Order, Integer>, UpdateRepository<Order, Integer> {
 
     List<Order> findByRestaurantTimeBetween(Integer restaurantId, LocalDateTime start, LocalDateTime end);
-    List<Order> findByUserId(Integer userId, LocalDateTime start, LocalDateTime end);
-    List<Order> findByUserIdStatus(Integer userId, OrderStatus status);
+    List<Order> findByUser(String username, LocalDateTime start, LocalDateTime end);
+    List<Order> findByUserAndStatus(String username, OrderStatus status);
     List<Order> findByRestaurantIdStatus(Integer restaurantId, Set<OrderStatus> statuses);
 }
 

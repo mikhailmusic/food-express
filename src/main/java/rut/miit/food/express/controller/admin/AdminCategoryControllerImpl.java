@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import rut.miit.food.express.controller.BaseControllerImpl;
+import rut.miit.food.express.dto.category.CategoryAddDto;
 import rut.miit.food.express.service.DishCategoryService;
 
 
@@ -37,7 +38,7 @@ public class AdminCategoryControllerImpl extends BaseControllerImpl implements A
             model.addAttribute("form", form);
             return "category-add";
         }
-        categoryService.addCategory(form.name());
+        categoryService.addCategory(new CategoryAddDto(form.name()));
         return "redirect:/categories";
     }
 
