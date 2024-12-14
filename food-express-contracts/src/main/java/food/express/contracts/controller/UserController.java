@@ -13,10 +13,10 @@ import java.security.Principal;
 public interface UserController extends BaseController {
 
     @PostMapping("/edit-profile")
-    String editUserProfile(@Valid @ModelAttribute("form") UserEditForm form, BindingResult result, Model model);
+    String editUserProfile(@Valid @ModelAttribute("form") UserEditForm form, BindingResult result, Principal principal, Model model);
 
     @PostMapping("/change-password")
-    String changePassword(@Valid @ModelAttribute("form") UserPasswordChangeForm form, BindingResult result, Model model);
+    String changePassword(@Valid @ModelAttribute("form") UserPasswordChangeForm form, BindingResult result, Principal principal, Model model);
 
     @GetMapping("/profile")
     String userProfile(Principal principal, Model model);

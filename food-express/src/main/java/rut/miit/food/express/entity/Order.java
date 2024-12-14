@@ -150,8 +150,8 @@ public class Order extends BaseEntity {
         }
 
         for (OrderItem orderItem : orderItems) {
-            if (!orderItem.getDish().getVisible()) {
-                throw new ValidationException("One or more dishes are unavailable");
+            if (!orderItem.getDish().getVisible() && orderItem.getCount() > 0) {
+                throw new ValidationException("One or more dishes are unavailable: " + orderItem.getDish().getName());
             }
         }
 

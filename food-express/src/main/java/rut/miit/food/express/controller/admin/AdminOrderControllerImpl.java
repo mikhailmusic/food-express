@@ -46,7 +46,7 @@ public class AdminOrderControllerImpl extends BaseControllerImpl implements Admi
     }
 
     @Override
-    @GetMapping("/{id}/edit-status")
+    @PostMapping("/{id}/edit-status")
     public String editOrderStatus(@PathVariable Integer id) {
         orderService.changeStatus(id);
         Integer restaurantId = orderService.getOrderDetails(id).restaurantId();

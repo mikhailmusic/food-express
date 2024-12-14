@@ -41,8 +41,8 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
     }
 
     @Override
-    @GetMapping("/create/add-item/{dishId}")
-    public  String addDishToOrder(Principal principal, @PathVariable Integer dishId, HttpServletRequest request) {
+    @PostMapping("/create/add-item/{dishId}")
+    public  String addDishToOrder(@PathVariable Integer dishId, Principal principal, HttpServletRequest request) {
         OrderItemAddDto dto = new OrderItemAddDto(dishId, principal.getName(), 1);
         orderService.addOrderItemToOrder(dto);
         String refererUrl = request.getHeader("Referer");
@@ -52,30 +52,30 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
 
     @Override
     @PostMapping("/create/change-item")
-    public String editDishCount(@Valid @ModelAttribute("form") OrderItemEditForm form) {
-        OrderItemUpdateDto dto = new OrderItemUpdateDto(form.itemId(), form.count());
+    public String editDishCount(@Valid @ModelAttribute("form") OrderItemEditForm form, Principal principal) {
+        OrderItemUpdateDto dto = new OrderItemUpdateDto(form.itemId(), form.count(), principal.getName());
         orderService.changeOrderItemToOrder(dto);
-        return "redirect:/orders/create/user";
+        return "redirect:/orders/create";
 
     }
 
     @Override
-    @GetMapping("/create/{id}")
-    public String createOrder(@PathVariable Integer id) {
-        orderService.createOrder(id);
+    @PostMapping("/create/{id}")
+    public String createOrder(@PathVariable Integer id, Principal principal) {
+        orderService.createOrder(id, principal.getName());
         return "redirect:/orders/user";
 
     }
 
     @Override
-    @PostMapping("/{id}")
-    public String cancelOrder(@PathVariable Integer id) {
-        orderService.cancelOrder(id);
+    @PostMapping("/cancel/{id}")
+    public String cancelOrder(@PathVariable Integer id, Principal principal)  {
+        orderService.cancelOrder(id, principal.getName());
         return "redirect:/orders/user";
     }
 
     @Override
-    @GetMapping("/create/user")
+    @GetMapping("/create")
     public String createOrder(Principal principal, Model model) {
         List<OrderCreateViewModel> orderViewModels = new ArrayList<>();
         for (OrderDto dto : orderService.userOrdersDraft(principal.getName())) {
@@ -135,7 +135,8 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
 
     @Override
     @PostMapping("/{id}/add-review")
-    public String addReviewToOrder(@PathVariable Integer id, @Valid @ModelAttribute("form") ReviewCreateForm form, BindingResult result, Model model) {
+    public String addReviewToOrder(@PathVariable Integer id, @Valid @ModelAttribute("form") ReviewCreateForm form,
+                                   Principal principal, BindingResult result, Model model) {
         if (result.hasErrors()) {
             CreateViewModel viewModel = new CreateViewModel(
                     createBaseViewModel("Добавление отзыва")
@@ -144,7 +145,7 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
             model.addAttribute("form", form);
             return "review-add";
         }
-        ReviewAddDto dto = new ReviewAddDto(id, form.rating(), form.text());
+        ReviewAddDto dto = new ReviewAddDto(principal.getName(), id, form.rating(), form.text());
         reviewService.leaveReview(dto);
         return "redirect:/orders/user";
 

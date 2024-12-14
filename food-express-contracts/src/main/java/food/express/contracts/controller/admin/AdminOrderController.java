@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/orders")
 public interface AdminOrderController {
 
-    @GetMapping("/{id}/edit-status")
+    @PostMapping("/{id}/edit-status")
     String editOrderStatus(@PathVariable Integer id);
 
     @GetMapping("/restaurant/{id}")

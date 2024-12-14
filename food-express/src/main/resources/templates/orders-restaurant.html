@@ -29,7 +29,9 @@
             </div>
 
             <div class="text-end" th:if="${order.status != 'DELIVERED'}">
-                <a th:href="@{/admin/orders/{id}/edit-status(id=${order.id})}" class="btn btn-primary">Следующий статус</a>
+                <form th:action="@{/admin/orders/{id}/edit-status(id=${order.id})}" method="post">
+                    <button type="submit" class="btn btn-primary">Следующий статус</button>
+                </form>
             </div>
 
 

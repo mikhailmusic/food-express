@@ -13,21 +13,20 @@ import java.security.Principal;
 @RequestMapping("/orders")
 public interface OrderController extends BaseController {
 
-    @GetMapping("/create/add-item/{dishId}")
-    String addDishToOrder(Principal principal, @PathVariable Integer dishId, HttpServletRequest request);
+    @PostMapping("/create/add-item/{dishId}")
+    String addDishToOrder(@PathVariable Integer dishId, Principal principal, HttpServletRequest request);
 
     @PostMapping("/create/change-item")
-    String editDishCount(@Valid @ModelAttribute("form") OrderItemEditForm form);
+    String editDishCount(@Valid @ModelAttribute("form") OrderItemEditForm form, Principal principal);
 
-    @GetMapping("/create/{id}")
-    String createOrder(@PathVariable Integer id);
+    @PostMapping("/create/{id}")
+    String createOrder(@PathVariable Integer id, Principal principal);
 
-    @GetMapping("/create/user")
+    @PostMapping("/cancel/{id}")
+    String cancelOrder(@PathVariable Integer id, Principal principal);
+
+    @GetMapping("/create")
     String createOrder(Principal principal, Model model);
-
-    @PostMapping("/{id}")
-    String cancelOrder(@PathVariable Integer id);
-
 
     @GetMapping("/user")
     String listOrders(Principal principal, Model model);
@@ -39,5 +38,6 @@ public interface OrderController extends BaseController {
     String addReviewToOrder(@PathVariable Integer id, Model model);
 
     @PostMapping("/{id}/add-review")
-    String addReviewToOrder(@PathVariable Integer id, @Valid @ModelAttribute("form") ReviewCreateForm form, BindingResult result, Model model);
+    String addReviewToOrder(@PathVariable Integer id, @Valid @ModelAttribute("form") ReviewCreateForm form,
+                            Principal principal, BindingResult result, Model model);
 }

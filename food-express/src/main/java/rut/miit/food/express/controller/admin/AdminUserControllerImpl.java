@@ -3,7 +3,6 @@ package rut.miit.food.express.controller.admin;
 import food.express.contracts.controller.admin.AdminUserController;
 import food.express.contracts.form.UserAdminEditForm;
 import food.express.contracts.form.UserSearchForm;
-import food.express.contracts.viewmodel.EditViewModel;
 import food.express.contracts.viewmodel.user.UserAdminEditViewModel;
 import food.express.contracts.viewmodel.user.UserListViewModel;
 import food.express.contracts.viewmodel.user.UserViewModel;

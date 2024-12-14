@@ -32,7 +32,7 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
 
     @Override
     @PostMapping("/edit-profile")
-    public String editUserProfile(@Valid @ModelAttribute("form") UserEditForm form, BindingResult result, Model model){
+    public String editUserProfile(@Valid @ModelAttribute("form") UserEditForm form, BindingResult result, Principal principal, Model model){
         if (result.hasErrors()) {
             EditViewModel viewModel = new EditViewModel(
                     createBaseViewModel("Редактирование профиля")
@@ -41,7 +41,7 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
             model.addAttribute("form", form);
             return "user-edit";
         }
-        UserUpdateDto dto = new UserUpdateDto(form.username(), form.firstName(), form.phoneNumber(), form.address());
+        UserUpdateDto dto = new UserUpdateDto(principal.getName(), form.firstName(), form.phoneNumber(), form.address());
         userService.updateUserInfo(dto);
         return "redirect:/users/profile";
 
@@ -49,7 +49,7 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
 
     @Override
     @PostMapping("/change-password")
-    public String changePassword(@Valid @ModelAttribute("form") UserPasswordChangeForm form, BindingResult result, Model model){
+    public String changePassword(@Valid @ModelAttribute("form") UserPasswordChangeForm form, BindingResult result, Principal principal, Model model){
         if (result.hasErrors()) {
             EditViewModel viewModel = new EditViewModel(
                     createBaseViewModel("Изменение пароля")
@@ -59,7 +59,7 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
             return "user-password";
         }
 
-        UserChangePasswordDto dto = new UserChangePasswordDto(form.username(), form.oldPassword(), form.newPassword(), form.confirmPassword());
+        UserChangePasswordDto dto = new UserChangePasswordDto(principal.getName(), form.oldPassword(), form.newPassword(), form.confirmPassword());
         userService.updateUserPassword(dto);
         return "redirect:/users/profile";
 

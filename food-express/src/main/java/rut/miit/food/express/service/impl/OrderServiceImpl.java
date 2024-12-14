@@ -9,10 +9,7 @@ import rut.miit.food.express.dto.order.OrderItemUpdateDto;
 import rut.miit.food.express.dto.review.ReviewDto;
 import rut.miit.food.express.entity.*;
 import rut.miit.food.express.entity.enums.OrderStatus;
-import rut.miit.food.express.exception.DishNotFoundException;
-import rut.miit.food.express.exception.EntityNotFoundException;
-import rut.miit.food.express.exception.OrderNotFoundException;
-import rut.miit.food.express.exception.UserNotFoundException;
+import rut.miit.food.express.exception.*;
 import rut.miit.food.express.repository.DishRepository;
 import rut.miit.food.express.repository.OrderItemRepository;
 import rut.miit.food.express.repository.OrderRepository;
@@ -59,20 +56,23 @@ public class OrderServiceImpl implements OrderService {
     public void changeOrderItemToOrder(OrderItemUpdateDto dto) {
         OrderItem item = orderItemRepository.findById(dto.id()).orElseThrow(() -> new EntityNotFoundException("OrderItem Not Found: " + dto.id()));
         Order order = item.getOrder();
+        checkUserAccess(order, dto.username());
         order.addOrder(item.getDish(), dto.newCount());
         orderItemRepository.update(item);
     }
 
     @Override
-    public void createOrder(Integer id) {
+    public void createOrder(Integer id, String username) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+        checkUserAccess(order, username);
         order.createOrder();
-        orderRepository.save(order);
+        orderRepository.update(order);
     }
 
     @Override
-    public void cancelOrder(Integer id) {
+    public void cancelOrder(Integer id, String username) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+        checkUserAccess(order, username);
         order.cancelOrder();
         orderRepository.update(order);
     }
@@ -112,7 +112,12 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream().sorted(Comparator.comparing(Order::getCreationTime).reversed()).map(this::toDto).toList();
     }
 
-
+    private void checkUserAccess(Order order, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new OrderAccessException(username);
+        }
+    }
 
     private OrderDto toDto(Order order) {
         if (order == null) {
