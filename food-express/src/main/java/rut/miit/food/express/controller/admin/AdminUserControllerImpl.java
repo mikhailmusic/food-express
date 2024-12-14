@@ -68,10 +68,10 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
 
     @Override
     @PostMapping("/{username}/edit-profile")
-    public String editUserProfile(@Valid @ModelAttribute("form") UserAdminEditForm form, BindingResult result, Model model) {
+    public String editUserProfile(@PathVariable String username, @Valid @ModelAttribute("form") UserAdminEditForm form, BindingResult result, Model model) {
         if (result.hasErrors()) {
             UserAdminEditViewModel viewModel = new UserAdminEditViewModel(
-                    createBaseViewModel("Изменение профиля"), form.username(), userService.getUserRoles()
+                    createBaseViewModel("Изменение профиля"), username, userService.getUserRoles()
             );
             model.addAttribute("model", viewModel);
             model.addAttribute("form", form);
