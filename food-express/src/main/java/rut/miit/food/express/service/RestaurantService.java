@@ -14,5 +14,4 @@ public interface RestaurantService {
     PageWrapper<RestaurantDto> availableRestaurants(String searchQuery, int page, int size);
     List<RestaurantRatingDto> ratingRestaurants();
 
-//    void closeRestaurant(Integer id);
 }

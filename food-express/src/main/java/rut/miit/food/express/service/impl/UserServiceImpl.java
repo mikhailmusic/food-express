@@ -1,6 +1,10 @@
 package rut.miit.food.express.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rut.miit.food.express.dto.user.*;
@@ -20,6 +24,7 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 
 @Service
+@EnableCaching
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
@@ -33,6 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "usersSearch", allEntries = true)
     public void registerUser(UserAddDto dto) {
         Set<String> logins = userRepository.findAllUsernames();
         Role userRole = userRoleRepository.findRoleByName(UserRole.USER).orElseThrow(() -> new EntityNotFoundException("Role not found: " + UserRole.USER));
@@ -43,6 +49,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "user", key = "#dto.username"),
+            @CacheEvict(value = "usersSearch", allEntries = true)
+    })
     public void updateUserInfo(UserUpdateDto dto) {
         Set<String> phoneNumbers = userRepository.findAllPhoneNumbers();
 
@@ -64,18 +74,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(Integer id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-        return toDto(user);
-    }
-
-    @Override
+    @Cacheable(value = "user", key = "#username")
     public UserDto getUser(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
         return toDto(user);
     }
 
     @Override
+    @Cacheable("usersSearch")
     public PageWrapper<UserDto> getAllUsers(String searchQuery, int page, int size) {
         List<UserDto> dtoList = userRepository.findByUsernameContaining(searchQuery).stream().map(this::toDto).toList();
         return PaginationHelper.getPage(dtoList, page, size);
@@ -87,6 +93,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "user", key = "#dto.username"),
+            @CacheEvict(value = "usersSearch", allEntries = true)
+    })
     public void userAdminUpdate(UserAdminUpdateDto dto) {
         User user = userRepository.findByUsername(dto.username()).orElseThrow(() -> new UserNotFoundException(dto.username()));
         Role role = userRoleRepository.findRoleByName(UserRole.valueOf(dto.role())).orElseThrow(() -> new EntityNotFoundException("Role not found: " + dto.role()));

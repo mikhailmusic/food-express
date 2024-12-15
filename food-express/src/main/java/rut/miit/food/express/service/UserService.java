@@ -9,7 +9,6 @@ public interface UserService {
     void registerUser(UserAddDto dto);
     void updateUserInfo(UserUpdateDto dto);
     void updateUserPassword(UserChangePasswordDto dto);
-    UserDto getUserById(Integer id);
     UserDto getUser(String username);
     PageWrapper<UserDto> getAllUsers(String searchQuery, int page, int size);
     List<String> getUserRoles();
