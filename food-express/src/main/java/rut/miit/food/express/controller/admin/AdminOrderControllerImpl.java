@@ -32,7 +32,7 @@ public class AdminOrderControllerImpl extends BaseControllerImpl implements Admi
     @Override
     @GetMapping("/restaurant/{id}")
     public String listOrdersForRestaurant(@PathVariable Integer id, Model model, Principal principal) {
-        LOG.info("User {} is viewing orders for restaurant ID: {}", principal.getName(), id);
+        LOG.info("User '{}' is viewing orders for restaurant ID: {}", principal.getName(), id);
 
         List<OrderRestaurantViewModel> orderViewModels = new ArrayList<>();
         for (OrderDto dto : orderService.restaurantOrders(id)) {
@@ -53,7 +53,7 @@ public class AdminOrderControllerImpl extends BaseControllerImpl implements Admi
     @Override
     @PostMapping("/{id}/edit-status")
     public String editOrderStatus(@PathVariable Integer id, Principal principal) {
-        LOG.info("User {} is changing the status for order ID: {}", principal.getName(), id);
+        LOG.info("User '{}' is changing the status for order ID: {}", principal.getName(), id);
         orderService.changeStatus(id);
         Integer restaurantId = orderService.getOrderDetails(id).restaurantId();
         LOG.info("Order ID: {} status successfully changed. Redirecting to restaurant ID: {}", id, restaurantId);

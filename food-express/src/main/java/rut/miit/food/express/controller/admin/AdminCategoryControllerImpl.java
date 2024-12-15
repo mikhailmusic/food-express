@@ -45,14 +45,14 @@ public class AdminCategoryControllerImpl extends BaseControllerImpl implements A
             return "category-add";
         }
         categoryService.addCategory(new CategoryAddDto(form.name()));
-        LOG.info("User '{}' successfully added category: {}", principal.getName(), form.name());
+        LOG.info("User '{}' successfully added category: {}", principal.getName(), form);
         return "redirect:/categories";
     }
 
     @Override
     @GetMapping("/add")
     public String addCategory(Model model, Principal principal) {
-        LOG.info("User {} is accessing the add category form", principal.getName());
+        LOG.info("User '{}' is accessing the add category form", principal.getName());
 
         CreateViewModel viewModel = new CreateViewModel(
                 createBaseViewModel("Добавление категории")

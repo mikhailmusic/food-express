@@ -179,7 +179,7 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
         }
         ReviewAddDto dto = new ReviewAddDto(username, id, form.rating(), form.text());
         reviewService.leaveReview(dto);
-        LOG.info("User '{}' successfully left a review for order '{}', rating: {}", username, id, form.rating());
+        LOG.info("User '{}' successfully left a review for order: '{}'", username, form);
         return "redirect:/orders/user";
 
     }

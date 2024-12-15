@@ -45,7 +45,7 @@ public class AdminDishControllerImpl extends BaseControllerImpl implements Admin
     @Override
     @GetMapping("/{restaurantId}/add-dish")
     public String addDish(@PathVariable Integer restaurantId, Model model, Principal principal) {
-        LOG.info("User {} is viewing the add dish page for restaurant with ID {}", principal.getName(), restaurantId);
+        LOG.info("User '{}' is viewing the add dish page for restaurant with ID {}", principal.getName(), restaurantId);
 
         List<CategoryViewModel> categories = categoryService.getAllCategories()
                 .stream().map(dto -> new CategoryViewModel(dto.id(), dto.name())).toList();
@@ -60,7 +60,7 @@ public class AdminDishControllerImpl extends BaseControllerImpl implements Admin
     @Override
     @PostMapping("/{restaurantId}/add-dish")
     public String addDish(@PathVariable Integer restaurantId, @Valid @ModelAttribute("form") DishCreateForm form, BindingResult result, Model model, Principal principal) {
-        LOG.info("User {} is submitting a new dish: name '{}', category ID {}, restaurant ID {}", principal.getName(), form.name(), form.categoryId(), restaurantId);
+        LOG.info("User '{}' is submitting a new dish: name '{}', category ID {}, restaurant ID {}", principal.getName(), form.name(), form.categoryId(), restaurantId);
         if (result.hasErrors()) {
             List<CategoryViewModel> categories = categoryService.getAllCategories()
                     .stream().map(dto -> new CategoryViewModel(dto.id(), dto.name())).toList();
@@ -74,14 +74,14 @@ public class AdminDishControllerImpl extends BaseControllerImpl implements Admin
         DishAddDto dto = new DishAddDto(form.name(), form.description(), form.price(), form.weight(),
                 form.calories(), form.imageURL(), form.restaurantId(), form.categoryId());
         dishService.addDish(dto);
-        LOG.info("User {} successfully added a new dish: {}", principal.getName(), form);
+        LOG.info("User '{}' successfully added a new dish: {}", principal.getName(), form);
         return "redirect:/restaurants/" + restaurantId;
     }
 
     @Override
     @PostMapping("/{id}/edit")
     public String editDish(@PathVariable Integer id, @Valid @ModelAttribute("form") DishEditForm form, BindingResult result, Model model, Principal principal) {
-        LOG.info("User {} is submitting an edit request for dish ID: {}", principal.getName(), id);
+        LOG.info("User '{}' is submitting an edit request for dish ID: {}", principal.getName(), id);
         if (result.hasErrors()) {
             List<CategoryViewModel> categories = categoryService.getAllCategories()
                     .stream().map(dto -> new CategoryViewModel(dto.id(), dto.name())).toList();
@@ -95,7 +95,7 @@ public class AdminDishControllerImpl extends BaseControllerImpl implements Admin
         DishUpdateDto dto = new DishUpdateDto(form.id(), form.name(), form.description(), form.price(), form.weight(),
                 form.calories(), form.imageURL(), form.isVisible(), form.categoryId());
         dishService.modifyDish(dto);
-        LOG.info("User {} successfully updated dish: {}", principal.getName(), form);
+        LOG.info("User '{}' successfully updated dish: {}", principal.getName(), form);
         return "redirect:/dishes/" + id;
 
     }
@@ -103,7 +103,7 @@ public class AdminDishControllerImpl extends BaseControllerImpl implements Admin
     @Override
     @GetMapping("/{id}/edit")
     public String editDish(@PathVariable Integer id, Model model, Principal principal) {
-        LOG.info("User {} is viewing the edit dish page for dish ID: {}", principal.getName(), id);
+        LOG.info("User '{}' is viewing the edit dish page for dish ID: {}", principal.getName(), id);
 
         DishDto dishDto = dishService.getDishDetails(id);
         List<CategoryViewModel> categories = categoryService.getAllCategories()

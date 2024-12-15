@@ -38,7 +38,7 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
     @Override
     @GetMapping
     public String listUsers(@ModelAttribute("form") UserSearchForm form, Model model, Principal principal){
-        LOG.info("ADMIN {} is listing users with login: {}, page: {}, size: {}",
+        LOG.info("ADMIN '{}' is listing users with login: {}, page: {}, size: {}",
                 principal.getName(), form.searchTerm(), form.page(), form.size());
 
         String searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
@@ -63,7 +63,7 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
     @Override
     @GetMapping("/{username}/edit-profile")
     public String editUserProfile(@PathVariable String username, Model model, Principal principal){
-        LOG.info("ADMIN {} is attempting to edit profile for user {}", principal.getName(), username);
+        LOG.info("ADMIN '{}' is attempting to edit profile for user '{}'", principal.getName(), username);
         UserDto dto = userService.getUser(username);
         UserAdminEditViewModel viewModel = new UserAdminEditViewModel(
                 createBaseViewModel("Изменение профиля"), dto.login(), userService.getUserRoles()
@@ -76,7 +76,7 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
     @Override
     @PostMapping("/{username}/edit-profile")
     public String editUserProfile(@PathVariable String username, @Valid @ModelAttribute("form") UserAdminEditForm form, BindingResult result, Model model, Principal principal) {
-        LOG.info("Admin {} is submitting profile update for user {}", principal.getName(), username);
+        LOG.info("ADMIN '{}' is submitting profile update for user '{}'", principal.getName(), username);
 
         if (result.hasErrors()) {
             UserAdminEditViewModel viewModel = new UserAdminEditViewModel(
@@ -87,7 +87,7 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
             return "user-admin-edit";
         }
         userService.userAdminUpdate(new UserAdminUpdateDto(form.username(), form.role()));
-        LOG.info("Admin {} successfully updated profile for user: {}", principal.getName(), form);
+        LOG.info("ADMIN '{}' successfully updated profile for user: '{}'", principal.getName(), form);
         return "redirect:/admin/users";
     }
 }
