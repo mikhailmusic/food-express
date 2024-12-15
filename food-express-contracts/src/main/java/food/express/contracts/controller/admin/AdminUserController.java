@@ -8,15 +8,17 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RequestMapping("/admin/users")
 public interface AdminUserController extends BaseController {
 
     @GetMapping
-    String listUsers(@ModelAttribute("form") UserSearchForm form, Model model);
+    String listUsers(@ModelAttribute("form") UserSearchForm form, Model model, Principal principal);
 
     @GetMapping("/{username}/edit-profile")
-    String editUserProfile(@PathVariable String username, Model model);
+    String editUserProfile(@PathVariable String username, Model model, Principal principal);
 
     @PostMapping("/{username}/edit-profile")
-    String editUserProfile(@PathVariable String username, @Valid @ModelAttribute("form") UserAdminEditForm form, BindingResult result, Model model);
+    String editUserProfile(@PathVariable String username, @Valid @ModelAttribute("form") UserAdminEditForm form, BindingResult result, Model model, Principal principal);
 }

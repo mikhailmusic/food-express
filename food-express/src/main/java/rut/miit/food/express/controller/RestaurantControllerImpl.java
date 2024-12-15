@@ -12,6 +12,8 @@ import food.express.contracts.viewmodel.restaurant.RestaurantListViewModel;
 import food.express.contracts.viewmodel.restaurant.RestaurantReviewViewModel;
 import food.express.contracts.viewmodel.restaurant.RestaurantViewModel;
 import food.express.contracts.viewmodel.review.ReviewViewModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,12 +23,14 @@ import rut.miit.food.express.dto.dish.DishByCategoryDto;
 import rut.miit.food.express.dto.restaurant.RestaurantDto;
 import rut.miit.food.express.service.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/restaurants")
 public class RestaurantControllerImpl extends BaseControllerImpl implements RestaurantController {
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
     private RestaurantService restaurantService;
     private DishService dishService;
     private ReviewService reviewService;
@@ -48,7 +52,10 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
 
     @Override
     @GetMapping
-    public String availableRestaurants(@ModelAttribute("form") RestaurantSearchForm form, Model model) {
+    public String availableRestaurants(@ModelAttribute("form") RestaurantSearchForm form, Model model, Principal principal) {
+        LOG.info("User '{}' is searching for available restaurants: search term: '{}', page: {}, size: {}",
+                getUsername(principal), form.searchTerm(), form.page(), form.size());
+
         String searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
         int page = form.page() != null ? form.page() : 1;
         int size = form.size() != null ? form.size() : 12;
@@ -68,7 +75,9 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
 
     @Override
     @GetMapping("/{id}")
-    public String restaurantDetails(@PathVariable Integer id, @ModelAttribute("form") DishFilterForm form, Model model) {
+    public String restaurantDetails(@PathVariable Integer id, @ModelAttribute("form") DishFilterForm form, Model model, Principal principal) {
+        LOG.info("User '{}' is viewing details for restaurant with ID: {}", getUsername(principal), id);
+
         boolean enableDish = form.enableDish() != null ? form.enableDish() : true;
         form = new DishFilterForm(enableDish);
 
@@ -91,7 +100,9 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
 
     @Override
     @GetMapping("/{id}/reviews")
-    public String restaurantWithReviews(@PathVariable Integer id, Model model) {
+    public String restaurantWithReviews(@PathVariable Integer id, Model model, Principal principal) {
+        LOG.info("User '{}' is viewing reviews for restaurant with ID: {}", getUsername(principal), id);
+
         RestaurantDto restaurantDto = restaurantService.getRestaurantDetails(id);
         List<ReviewViewModel> reviewViewModels = reviewService.reviewsForRestaurant(id)
                 .stream().map(dto -> new ReviewViewModel(dto.rating(), dto.text(), dto.date(), dto.userFirstName())).toList();

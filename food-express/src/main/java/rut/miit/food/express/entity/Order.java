@@ -143,7 +143,7 @@ public class Order extends BaseEntity {
     }
 
     public void createOrder() {
-        if (!restaurant.checkIsOpenNow()) throw new ValidationException("Restaurant is now closed");
+        if (!restaurant.checkIsOpenNow()) throw new ValidationException("Restaurant is now closed: " + restaurant.getName());
 
         if (status != OrderStatus.DRAFT || orderItems == null || orderItems.isEmpty()) {
             throw new ValidationException("The status is not DRAFT or there are no dishes in the order");

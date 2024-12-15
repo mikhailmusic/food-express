@@ -7,6 +7,8 @@ import food.express.contracts.viewmodel.user.UserAdminEditViewModel;
 import food.express.contracts.viewmodel.user.UserListViewModel;
 import food.express.contracts.viewmodel.user.UserViewModel;
 import jakarta.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +20,13 @@ import rut.miit.food.express.dto.user.UserDto;
 import rut.miit.food.express.service.UserService;
 import rut.miit.food.express.util.PageWrapper;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin/users")
 public class AdminUserControllerImpl extends BaseControllerImpl implements AdminUserController {
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
     private UserService userService;
 
     @Autowired
@@ -33,7 +37,10 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
 
     @Override
     @GetMapping
-    public String listUsers(@ModelAttribute("form") UserSearchForm form, Model model){
+    public String listUsers(@ModelAttribute("form") UserSearchForm form, Model model, Principal principal){
+        LOG.info("ADMIN {} is listing users with login: {}, page: {}, size: {}",
+                principal.getName(), form.searchTerm(), form.page(), form.size());
+
         String searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
         int page = form.page() != null ? form.page() : 1;
         int size = form.size() != null ? form.size() : 20;
@@ -55,7 +62,8 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
 
     @Override
     @GetMapping("/{username}/edit-profile")
-    public String editUserProfile(@PathVariable String username, Model model){
+    public String editUserProfile(@PathVariable String username, Model model, Principal principal){
+        LOG.info("ADMIN {} is attempting to edit profile for user {}", principal.getName(), username);
         UserDto dto = userService.getUser(username);
         UserAdminEditViewModel viewModel = new UserAdminEditViewModel(
                 createBaseViewModel("Изменение профиля"), dto.login(), userService.getUserRoles()
@@ -67,16 +75,19 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
 
     @Override
     @PostMapping("/{username}/edit-profile")
-    public String editUserProfile(@PathVariable String username, @Valid @ModelAttribute("form") UserAdminEditForm form, BindingResult result, Model model) {
+    public String editUserProfile(@PathVariable String username, @Valid @ModelAttribute("form") UserAdminEditForm form, BindingResult result, Model model, Principal principal) {
+        LOG.info("Admin {} is submitting profile update for user {}", principal.getName(), username);
+
         if (result.hasErrors()) {
             UserAdminEditViewModel viewModel = new UserAdminEditViewModel(
                     createBaseViewModel("Изменение профиля"), username, userService.getUserRoles()
             );
             model.addAttribute("model", viewModel);
             model.addAttribute("form", form);
-            return "user-edit";
+            return "user-admin-edit";
         }
         userService.userAdminUpdate(new UserAdminUpdateDto(form.username(), form.role()));
+        LOG.info("Admin {} successfully updated profile for user: {}", principal.getName(), form);
         return "redirect:/admin/users";
     }
 }

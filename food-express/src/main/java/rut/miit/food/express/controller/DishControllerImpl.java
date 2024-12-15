@@ -4,6 +4,8 @@ import food.express.contracts.controller.DishController;
 import food.express.contracts.form.DishSearchForm;
 import food.express.contracts.viewmodel.category.CategoryViewModel;
 import food.express.contracts.viewmodel.dish.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,12 +16,14 @@ import rut.miit.food.express.dto.dish.DishDto;
 import rut.miit.food.express.service.DishCategoryService;
 import rut.miit.food.express.service.DishService;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/dishes")
 public class DishControllerImpl extends BaseControllerImpl implements DishController {
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
     private DishService dishService;
     private DishCategoryService categoryService;
 
@@ -35,7 +39,8 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
 
     @Override
     @GetMapping("/{id}")
-    public String dishDetails(@PathVariable Integer id, Model model) {
+    public String dishDetails(@PathVariable Integer id, Model model, Principal principal) {
+        LOG.info("User '{}' is viewing details for dish with ID: {}", getUsername(principal), id);
         DishDto dto = dishService.getDishDetails(id);
         DishInfoViewModel viewModel = new DishInfoViewModel(
                 createBaseViewModel(dto.name()),
@@ -49,7 +54,9 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
 
     @Override
     @GetMapping
-    public String listDishes(@ModelAttribute DishSearchForm form, Model model) {
+    public String listDishes(@ModelAttribute DishSearchForm form, Model model, Principal principal) {
+        LOG.info("User '{}' is searching for dishes: search term: '{}', category: '{}', page: {}, size: {}",
+                getUsername(principal), form.searchTerm(), form.categoryId(), form.page(), form.size());
         String searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
         int page = form.page() != null ? form.page() : 1;
         int size = form.size() != null ? form.size() : 12;
@@ -72,7 +79,8 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
 
     @Override
     @GetMapping("/popular")
-    public String popular(Model model) {
+    public String popular(Model model, Principal principal) {
+        LOG.info("User '{}' is viewing popular dishes", getUsername(principal));
         List<DishByCategoryViewModel> dishViewModels = new ArrayList<>();
         for (DishByCategoryDto dto : dishService.popularDish()) {
             dishViewModels.add(new DishByCategoryViewModel(dto.id(), dto.name(),

@@ -32,10 +32,10 @@ public interface OrderController extends BaseController {
     String listOrders(Principal principal, Model model);
 
     @GetMapping("/{id}")
-    String orderDetails(@PathVariable Integer id, Model model);
+    String orderDetails(@PathVariable Integer id, Model model, Principal principal);
 
     @GetMapping("/{id}/add-review")
-    String addReviewToOrder(@PathVariable Integer id, Model model);
+    String addReviewToOrder(@PathVariable Integer id, Model model, Principal principal);
 
     @PostMapping("/{id}/add-review")
     String addReviewToOrder(@PathVariable Integer id, @Valid @ModelAttribute("form") ReviewCreateForm form,

@@ -10,13 +10,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
+
 @RequestMapping("/admin/categories")
 public interface AdminCategoryController extends BaseController {
 
     @PostMapping("/add")
-    String addCategory(@Valid @ModelAttribute("form") CategoryCreateForm form, BindingResult bindingResult, Model model);
+    String addCategory(@Valid @ModelAttribute("form") CategoryCreateForm form, BindingResult bindingResult, Model model, Principal principal);
 
     @GetMapping("/add")
-    String addCategory(Model model);
+    String addCategory(Model model, Principal principal);
 
 }
