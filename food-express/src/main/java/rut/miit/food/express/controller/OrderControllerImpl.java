@@ -196,7 +196,7 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
             reviewViewModel = new ReviewViewModel(reviewDto.rating(), reviewDto.text(), reviewDto.date(), reviewDto.userFirstName());
         }
         OrderInfoViewModel orderViewModel = new OrderInfoViewModel(dto.id(), dto.creationTime(), dto.deliveryTime(),
-                dto.status().name(), dto.totalAmount(), dto.restaurantId(), dto.restaurantName(), itemViewModels, reviewViewModel);
+                dto.status(), dto.totalAmount(), dto.restaurantId(), dto.restaurantName(), itemViewModels, reviewViewModel);
         return orderViewModel;
     }
 

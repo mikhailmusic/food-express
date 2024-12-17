@@ -134,7 +134,7 @@ public class OrderServiceImpl implements OrderService {
             reviewDto = new ReviewDto(review.getText(), review.getRating(), review.getDate(), review.getUser().getFirstName());
         }
         BigDecimal total = order.getTotalAmount() == null ? order.calculateTotalAmount() : order.getTotalAmount();
-        return new OrderDto(order.getId(), order.getCreationTime(), order.getDeliveryTime(), order.getStatus(), total,
+        return new OrderDto(order.getId(), order.getCreationTime(), order.getDeliveryTime(), order.getStatus().name(), total,
                 order.getRestaurant().getId(), order.getRestaurant().getName(), orderItems, reviewDto);
     }
 }

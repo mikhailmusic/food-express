@@ -40,7 +40,7 @@ public class AdminOrderControllerImpl extends BaseControllerImpl implements Admi
                     .stream().map(itemDto -> new OrderItemViewModel(itemDto.id(), itemDto.dishId(), itemDto.count(),
                             itemDto.dishName(), itemDto.imageURL(), itemDto.isVisible())).toList();
             OrderRestaurantViewModel orderViewModel = new OrderRestaurantViewModel(dto.id(), dto.creationTime(),
-                    dto.status().name(), itemViewModels);
+                    dto.status(), itemViewModels);
             orderViewModels.add(orderViewModel);
         }
         OrderRestaurantListViewModel viewModel = new OrderRestaurantListViewModel(
