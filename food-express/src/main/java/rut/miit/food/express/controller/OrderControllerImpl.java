@@ -170,6 +170,7 @@ public class OrderControllerImpl extends BaseControllerImpl implements OrderCont
         LOG.info("User '{}' is attempting to leave a review for order with ID '{}'", username, id);
 
         if (result.hasErrors()) {
+            LOG.warn(getErrorMessage(result, "ReviewCreateForm", principal.getName()));
             CreateViewModel viewModel = new CreateViewModel(
                     createBaseViewModel("Добавление отзыва")
             );

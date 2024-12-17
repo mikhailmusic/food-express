@@ -37,6 +37,7 @@ public class AdminCategoryControllerImpl extends BaseControllerImpl implements A
         LOG.info("User '{}' is attempting to add a new category: {}", principal.getName(), form.name());
 
         if (bindingResult.hasErrors()) {
+            LOG.warn(getErrorMessage(bindingResult, "CategoryCreateForm", principal.getName()));
             CreateViewModel viewModel = new CreateViewModel(
                     createBaseViewModel("Добавление категории")
             );

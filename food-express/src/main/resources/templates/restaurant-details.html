@@ -47,7 +47,7 @@
                     <div th:each="category : ${model.category}">
                         <a th:href="'#' + ${category.name}" class="list-group-item d-flex justify-content-between">
                             <span th:text="${category.name}"></span>
-                            <span th:text="${category.count}" class="badge bg-secondary rounded-circle"></span>
+                            <span th:text="${category.count}" class="text-success"></span>
                         </a>
                     </div>
                 </div>

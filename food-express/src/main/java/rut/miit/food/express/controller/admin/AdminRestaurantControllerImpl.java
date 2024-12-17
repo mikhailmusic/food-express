@@ -48,6 +48,8 @@ public class AdminRestaurantControllerImpl extends BaseControllerImpl implements
         LOG.info("ADMIN '{}' is attempting to add a new restaurant with name: {}", principal.getName(), form.name());
 
         if (result.hasErrors()) {
+            LOG.warn(getErrorMessage(result, "RestaurantCreateForm", principal.getName()));
+
             CreateViewModel viewModel = new CreateViewModel(
                     createBaseViewModel("Добавление ресторана")
             );
@@ -68,6 +70,8 @@ public class AdminRestaurantControllerImpl extends BaseControllerImpl implements
         LOG.info("ADMIN '{}' is attempting to edit restaurant with id: {}", principal.getName(), id);
 
         if (result.hasErrors()) {
+            LOG.warn(getErrorMessage(result, "RestaurantEditForm", principal.getName()));
+
             EditViewModel viewModel = new EditViewModel(
                     createBaseViewModel("Редактирование информации")
             );

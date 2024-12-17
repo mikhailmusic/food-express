@@ -4,7 +4,7 @@
 <body>
 <header th:replace="~{fragments/header}"></header>
 <main>
-    <div class="container p-3 col-md-4">
+    <div class="container p-3 col-md-5">
         <h2 class="mb-2 fw-light text-center">Изменение информации</h2>
         <form th:action="@{/admin/dishes/{id}/edit(id=${form.id})}" th:object="${form}" th:method="post">
             <input th:field="*{id}" type="hidden" id="id" class="form-control text-center"/>

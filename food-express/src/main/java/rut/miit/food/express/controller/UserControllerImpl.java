@@ -39,6 +39,7 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
         LOG.info("User '{}' is editing their profile with new data: firstName, phoneNumber, address", principal.getName());
 
         if (result.hasErrors()) {
+            LOG.warn("User '{}' failed to edit their profile", principal.getName());
             EditViewModel viewModel = new EditViewModel(
                     createBaseViewModel("Редактирование профиля")
             );
@@ -58,6 +59,7 @@ public class UserControllerImpl extends BaseControllerImpl implements UserContro
     public String changePassword(@Valid @ModelAttribute("form") UserPasswordChangeForm form, BindingResult result, Principal principal, Model model){
         LOG.info("User '{}' is changing their password", principal.getName());
         if (result.hasErrors()) {
+            LOG.warn("User '{}' failed to change their password", principal.getName());
             EditViewModel viewModel = new EditViewModel(
                     createBaseViewModel("Изменение пароля")
             );

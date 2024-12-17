@@ -32,6 +32,7 @@ public class AuthControllerImpl extends BaseControllerImpl implements AuthContro
     public String registerUser(@Valid @ModelAttribute("form") UserRegisterForm form, BindingResult bindingResult, Model model){
         LOG.info("User anonymous is attempting to register: login='{}'", form.login());
         if (bindingResult.hasErrors()) {
+            LOG.warn("User registration failed for login='{}'", form.login());
             CreateViewModel viewModel = new CreateViewModel(
                     createBaseViewModel("Регистрация")
             );

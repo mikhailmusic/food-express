@@ -62,6 +62,8 @@ public class AdminDishControllerImpl extends BaseControllerImpl implements Admin
     public String addDish(@PathVariable Integer restaurantId, @Valid @ModelAttribute("form") DishCreateForm form, BindingResult result, Model model, Principal principal) {
         LOG.info("User '{}' is submitting a new dish: name '{}', category ID {}, restaurant ID {}", principal.getName(), form.name(), form.categoryId(), restaurantId);
         if (result.hasErrors()) {
+            LOG.warn(getErrorMessage(result, "DishCreateForm", principal.getName()));
+
             List<CategoryViewModel> categories = categoryService.getAllCategories()
                     .stream().map(dto -> new CategoryViewModel(dto.id(), dto.name())).toList();
             DishInputViewModel viewModel = new DishInputViewModel(
@@ -83,6 +85,8 @@ public class AdminDishControllerImpl extends BaseControllerImpl implements Admin
     public String editDish(@PathVariable Integer id, @Valid @ModelAttribute("form") DishEditForm form, BindingResult result, Model model, Principal principal) {
         LOG.info("User '{}' is submitting an edit request for dish ID: {}", principal.getName(), id);
         if (result.hasErrors()) {
+            LOG.warn(getErrorMessage(result, "DishEditForm", principal.getName()));
+
             List<CategoryViewModel> categories = categoryService.getAllCategories()
                     .stream().map(dto -> new CategoryViewModel(dto.id(), dto.name())).toList();
             DishInputViewModel viewModel = new DishInputViewModel(

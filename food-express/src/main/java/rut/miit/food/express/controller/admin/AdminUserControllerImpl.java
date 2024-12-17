@@ -79,6 +79,7 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
         LOG.info("ADMIN '{}' is submitting profile update for user '{}'", principal.getName(), username);
 
         if (result.hasErrors()) {
+            LOG.warn("ADMIN '{}' failed to update profile for user '{}'", principal.getName(), username);
             UserAdminEditViewModel viewModel = new UserAdminEditViewModel(
                     createBaseViewModel("Изменение профиля"), username, userService.getUserRoles()
             );
@@ -87,7 +88,7 @@ public class AdminUserControllerImpl extends BaseControllerImpl implements Admin
             return "user-admin-edit";
         }
         userService.userAdminUpdate(new UserAdminUpdateDto(form.username(), form.role()));
-        LOG.info("ADMIN '{}' successfully updated profile for user: '{}'", principal.getName(), form);
+        LOG.info("ADMIN '{}' successfully updated profile for user: '{}'", principal.getName(), username);
         return "redirect:/admin/users";
     }
 }

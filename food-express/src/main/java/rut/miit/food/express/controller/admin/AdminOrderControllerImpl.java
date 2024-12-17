@@ -53,10 +53,10 @@ public class AdminOrderControllerImpl extends BaseControllerImpl implements Admi
     @Override
     @PostMapping("/{id}/edit-status")
     public String editOrderStatus(@PathVariable Integer id, Principal principal) {
-        LOG.info("User '{}' is changing the status for order ID: {}", principal.getName(), id);
+        LOG.info("User '{}' is attempting to change the status of order ID: {}", principal.getName(), id);
         orderService.changeStatus(id);
         Integer restaurantId = orderService.getOrderDetails(id).restaurantId();
-        LOG.info("Order ID: {} status successfully changed. Redirecting to restaurant ID: {}", id, restaurantId);
+        LOG.info("User '{}' successfully changed the status of order ID: {}. Redirecting to restaurant ID: {}", principal.getName(), id, restaurantId);
         return "redirect:/admin/orders/restaurant/" + restaurantId;
     }
 }
