@@ -13,7 +13,7 @@ public interface DishController extends BaseController {
     String dishDetails(@PathVariable Integer id, Model model, Principal principal);
 
     @GetMapping
-    String listDishes(@ModelAttribute DishSearchForm form, Model model, Principal principal);
+    String listDishes(@ModelAttribute("form") DishSearchForm form, Model model, Principal principal);
 
     @GetMapping("/popular")
     String popular(Model model, Principal principal);

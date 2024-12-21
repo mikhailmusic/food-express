@@ -12,6 +12,7 @@ import food.express.contracts.viewmodel.restaurant.RestaurantListViewModel;
 import food.express.contracts.viewmodel.restaurant.RestaurantReviewViewModel;
 import food.express.contracts.viewmodel.restaurant.RestaurantViewModel;
 import food.express.contracts.viewmodel.review.ReviewViewModel;
+import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
 
     @Override
     @GetMapping
-    public String availableRestaurants(@ModelAttribute("form") RestaurantSearchForm form, Model model, Principal principal) {
+    public String availableRestaurants(@Valid @ModelAttribute("form") RestaurantSearchForm form, Model model, Principal principal) {
         LOG.info("User '{}' is searching for available restaurants: search term: '{}', page: {}, size: {}",
                 getUsername(principal), form.searchTerm(), form.page(), form.size());
 
@@ -75,7 +76,7 @@ public class RestaurantControllerImpl extends BaseControllerImpl implements Rest
 
     @Override
     @GetMapping("/{id}")
-    public String restaurantDetails(@PathVariable Integer id, @ModelAttribute("form") DishFilterForm form, Model model, Principal principal) {
+    public String restaurantDetails(@PathVariable Integer id, @Valid @ModelAttribute("form") DishFilterForm form, Model model, Principal principal) {
         LOG.info("User '{}' is viewing details for restaurant with ID: {}", getUsername(principal), id);
 
         boolean enableDish = form.enableDish() != null ? form.enableDish() : true;

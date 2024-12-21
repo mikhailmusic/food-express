@@ -139,10 +139,10 @@ public class User extends BaseEntity{
 
     private void setPassword(String password, String confirmPassword, String hash) {
         if (password == null || confirmPassword == null || password.length() < 8 || password.length() > 25) {
-            throw new InvalidValueException("Password is incorrect: " + password + " | " + confirmPassword);
+            throw new InvalidValueException("Password is incorrect. User: " + login);
         }
         if (!password.equals(confirmPassword)) {
-            throw new InvalidValueException("Password and its confirmation do not match: " + password + " | " + confirmPassword);
+            throw new InvalidValueException("Password and its confirmation do not match. User: " + login);
         }
         if (hash == null || hash.length() < 32) throw new InvalidValueException("This is not a hash");
 
@@ -151,7 +151,7 @@ public class User extends BaseEntity{
 
     public void changePassword(String oldPassword, String newPassword, String confirmPassword, String hash, BiPredicate<String, String> check) {
         if (!check.test(oldPassword, password)) {
-            throw new InvalidValueException("Old password is incorrect");
+            throw new InvalidValueException("Old password is incorrect. User: " + login);
         }
         setPassword(newPassword, confirmPassword, hash);
     }

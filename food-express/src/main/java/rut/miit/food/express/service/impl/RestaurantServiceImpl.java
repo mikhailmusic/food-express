@@ -32,7 +32,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    @CacheEvict(value = {"restaurants"}, allEntries = true)
     public Integer registerRestaurant(RestaurantAddDto dto) {
         Set<String> existingNames = restaurantRepository.findAllNames();
 
@@ -43,7 +42,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     @Caching(evict = {
             @CacheEvict(value = "restaurant", key = "#dto.id"),
-            @CacheEvict(value = {"restaurants", "top-restaurants"}, allEntries = true)
+            @CacheEvict(value = {"top-restaurants"}, allEntries = true)
     })
     public void changeRestaurantInfo(RestaurantDto dto) {
         Set<String> existingNames = restaurantRepository.findAllNames();
@@ -68,7 +67,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    @Cacheable("restaurants")
     public PageWrapper<RestaurantDto> availableRestaurants(String searchQuery, int page, int size) {
         List<RestaurantDto> restaurantDtos = restaurantRepository.findByNameContaining(searchQuery).stream()
                 .filter(restaurant -> restaurant.checkIsOpenNow()).map(this::toDto).toList();
@@ -80,7 +78,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Cacheable("top-restaurants")
     public List<RestaurantRatingDto> ratingRestaurants() {
         List<RestaurantRatingDto> dtoList = new ArrayList<>();
-        for (Restaurant restaurant : restaurantRepository.findAllWithOrders()) {   // EAGER - беру все сразу - 1 запрос
+        for (Restaurant restaurant : restaurantRepository.findAllWithOrders()) {
 
             int orderCount = 0;
             int reviewCount = 0;

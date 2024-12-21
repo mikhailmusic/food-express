@@ -54,7 +54,7 @@ public class DishControllerImpl extends BaseControllerImpl implements DishContro
 
     @Override
     @GetMapping
-    public String listDishes(@ModelAttribute DishSearchForm form, Model model, Principal principal) {
+    public String listDishes(@ModelAttribute("form") DishSearchForm form, Model model, Principal principal) {
         LOG.info("User '{}' is searching for dishes: search term: '{}', category: '{}', page: {}, size: {}",
                 getUsername(principal), form.searchTerm(), form.categoryId(), form.page(), form.size());
         String searchTerm = form.searchTerm() != null ? form.searchTerm() : "";

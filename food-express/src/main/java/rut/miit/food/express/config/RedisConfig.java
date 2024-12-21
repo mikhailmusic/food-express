@@ -37,7 +37,6 @@ public class RedisConfig {
                 .withCacheConfiguration("popular-dishes", myDefaultCacheConfig(Duration.ofMinutes(60)))
                 .withCacheConfiguration("categories", myDefaultCacheConfig(Duration.ofMinutes(480)))
                 .withCacheConfiguration("dishes-restaurant", myDefaultCacheConfig(Duration.ofMinutes(60)))
-                .withCacheConfiguration("restaurants", myDefaultCacheConfig(Duration.ofMinutes(30)))
                 .build();
     }
 
